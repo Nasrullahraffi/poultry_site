@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Login{% endblock title %}
+{% block body %}
+<div class="container">
+ <div class="row my-3">
+  <div class="col-sm-6 offset-sm-3 text-white mt-5" style="background-color:rgb(105, 43, 23); border-radius:30px;"> 
+   <form action="" method="post" novalidate class="shadow p-5">
+        {% csrf_token %}
+        {% for fm in form %}
+          <div class="form-group">
+            {{fm.label_tag}} {{fm}} <small class='text-danger' >{{fm.errors | striptags }}</small> <br>
+          </div>
+        {% endfor %}
+    <small><a href="#">Forgot Password</a></small> <br>
+    <input type="submit" class="btn btn-primary mt-4" value="Login">
+    <br>
+    <div class="text-center text-primary fw-bold"><small>New Taru ? <a href="#"
+       class="text-danger">Create an Account</a> </small></div>
+   </form>
+  </div>
+ </div>
+</div>
+{% endblock body %}

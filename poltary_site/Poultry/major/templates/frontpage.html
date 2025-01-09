@@ -1,0 +1,144 @@
+{% extends "base.html" %} {% load static %} {% block title %} Front | Form {% endblock title %} {% block body %}
+
+<div>
+    <div class="column-lg pt-5">
+        <img class="farm1" style="width:1600px; height:720px; border-radius:10px; margin-left:30px;" src="{% static 'major/imgs/farm4.jpg' %}" alt="">
+    </div>
+</div>
+
+<div class="container-text text-primary col-lg-7 mt-5 pt-2 pb-2 px-5" style="border-radius:20px; margin-left: 300px; margin-top:20px; font-size: xx-large; font-weight: bolder; background:white;">
+    <h1>FIRST COMES THE CHICKEN, THEN THE EGG</h1>
+</div>
+
+<style>
+    .inline-container {
+        display: flex;
+        align-items: center;
+        justify-content: baseline;
+        white-space: nowrap;
+        margin-left: 50px;
+        margin-top: 20px;
+    }
+    
+    .inline-container img {
+        width: 600px;
+        height: 500px;
+        border-radius: 30px;
+    }
+    
+    .inline-container .text-container {
+        max-width: 600px;
+        margin-left: 30px;
+    }
+    
+    .inline-container .text-container h2 {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+    
+    .inline-container .text-container span {
+        font-size: 1.5rem;
+        line-height: 1.5;
+    }
+    
+    .text1 {
+        margin: 10px 5px 10px 5px;
+    }
+    .major-heading {
+        font-size: 2.5rem;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .info-container {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-top: 20px;
+    }
+    
+    .info-block {
+        width: 22%; /* Adjust this width to fit your layout */
+        min-width: 250px; /* Ensures responsiveness */
+    }
+    
+    .info-block h1 {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .info-block p {
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #555;
+    }
+    
+
+</style>
+
+<div class="inline-container">
+    <img src="{% static 'major/imgs/farm3.jpg' %}" alt="">
+    <div class="text-container">
+        <h2>Revolutionizing Farming For a Healthier Planet</h2>
+        <span class="text">We redefine the role of livestock in the food ecosystem. <br> Our chickens contribute to a better environment and prevent food waste by turning <br> surpluses of agriculture and food processing into nutritious eggs <br> and meat, as well as valuable fertilizers. <br> The carefully controlled upcycled feed contains, <br> for example, leftovers from sources such as large bakeries, and pasta factories.</span>
+    </div>
+</div>
+
+
+<div class="inline-container">
+    <div class="text-container" style="margin-right:200px;">
+        <h2>Better for Birds, Earth and You</h2>
+        <span class="text">We’re on a mission to revolutionize food production  <br> by prioritizing ethics and sustainability, <br> ensuring a healthier planet for future generations.</span>
+    </div>
+    <img src="{% static 'major/imgs/farm2.jpg' %}" alt="">
+</div>
+
+
+<div class="inline-container">
+    <img src="{% static 'major/imgs/farm3.jpg' %}" alt="">
+    <div class="text-container">
+        <h2>More respect for animals and nature</h2>
+        <span class="text">It might sound like a ridiculous goal for a poultry farmer, or even a crazy one, <br> but we’re dedicated to creating a world with fewer animal <br> products on our shopping lists. After all, we believe that truly <br> responsible farming means moving away from using animals <br> altogether, as genuine care for them means not serving <br> them as food.</span>
+    </div>
+</div>
+
+
+<div class="container-box mx-5 mt-5 mb-5 px-5" style="border-radius:20px; background-color:rgb(184, 240, 242);">
+    <h1 class="major-heading">A role for only a few farm animals</h1>
+    <p>We believe there’s a role for only a few farm animals, and only under certain strict conditions:</p>
+
+    <div class="info-container">
+        <div class="info-block">
+            <h1>SUSTAINABLE</h1>
+            <p>Farm animals ought to be an asset to a sustainable and robust food system – not a burden</p>
+        </div>
+        <div class="info-block">
+            <h1>Natural behaviors</h1>
+            <p>Humans are obliged to honor the feelings and natural behaviors of farm animals by ensuring their most fulfilling lives</p>
+        </div>
+        <div class="info-block">
+            <h1>PRODUCING FOOD</h1>
+            <p>The rivalry over food resources between humans and farm animals should never occur. The focus of crop cultivation should be on producing food, not animal feed</p>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="inline-container">
+    <img style="width:600px; height:800px;" src="{% static 'major/imgs/farm6.png' %}" alt="">
+    <div class="text-container">
+        <h2>Fact</h2>
+        <span class="text">Currently, over 75% of all agricultural land is used to grow livestock <br> feed crops or for grazing.</span>
+        <h2>AGRICULTURAL LAND USE</h2>
+        <span class="text">To produce meat, milk and eggs, we need an incredible amount <br> of wheat, corn and soy. If people just ate these <br> crops directly, our needs would be <br> much less – and the planet would thank us. <br> However, people still like to eat animals products. <br> Therefore, we try to be good to our chickens and <br> the environment, without making our eggs too expensive for <br> the average person. This view creates dilemmas and tough choises <br> that we have to make.</span>
+        
+    
+    </div>
+</div>
+
+
+{% endblock body %}
