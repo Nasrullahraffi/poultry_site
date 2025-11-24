@@ -9,6 +9,8 @@ from products.views import (
     PurchaseOrderListView, PurchaseOrderCreateView, RFIDTagListView, RFIDTagCreateView
 )
 
+app_name = 'products'
+
 urlpatterns = [
     # Batches
     path('batches/', BatchListView.as_view(), name='batch_list'),

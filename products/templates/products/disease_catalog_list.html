@@ -1,2 +1,2 @@
-{% extends 'base.html' %}{% block content %}<h1>Disease Catalog</h1><a href="{% url 'disease_catalog_create' %}" class="btn btn-primary btn-sm">New</a><ul>{% for d in diseases %}<li>{{ d.name }} (sev {{ d.severity }})</li>{% empty %}<li>None</li>{% endfor %}</ul>{% endblock %}
+{% extends 'base.html' %}{% block content %}<h1>Disease Catalog</h1><a href="{% url 'products:disease_catalog_create' %}" class="btn btn-primary btn-sm">New</a><ul>{% for d in diseases %}<li>{{ d.name }} (sev {{ d.severity }})</li>{% empty %}<li>None</li>{% endfor %}</ul>{% endblock %}
 

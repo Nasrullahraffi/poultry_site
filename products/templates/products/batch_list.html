@@ -1,14 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>Chick Batches</h1>
-<a href="{% url 'batch_create' %}" class="btn btn-sm btn-primary">New Batch</a>
+<a href="{% url 'products:batch_create' %}" class="btn btn-sm btn-primary">New Batch</a>
 <table class="table table-sm mt-3">
 <thead><tr><th>ID</th><th>Type</th><th>Hatch Date</th><th>Initial Count</th><th>Age (days)</th></tr></thead>
 <tbody>
 {% for b in batches %}
-<tr><td><a href="{% url 'batch_detail' b.id %}">{{ b.id }}</a></td><td>{{ b.get_breeder_type_display }}</td><td>{{ b.hatch_date }}</td><td>{{ b.initial_count }}</td><td>{{ b.age_days }}</td></tr>
+<tr><td><a href="{% url 'products:batch_detail' b.id %}">{{ b.id }}</a></td><td>{{ b.get_breeder_type_display }}</td><td>{{ b.hatch_date }}</td><td>{{ b.initial_count }}</td><td>{{ b.age_days }}</td></tr>
 {% empty %}<tr><td colspan="5">No batches.</td></tr>{% endfor %}
 </tbody>
 </table>
 {% endblock %}
-
