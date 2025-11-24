@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% endblock %}
+<form method="post">{% csrf_token %}{{ form.as_p }}<button class="btn btn-success">Save</button></form>
+<h1>New Batch</h1>
+{% block content %}
+

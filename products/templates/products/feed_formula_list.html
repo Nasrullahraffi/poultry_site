@@ -1,0 +1,2 @@
+{% extends 'base.html' %}{% block content %}<h1>Feed Formulas</h1><a href="{% url 'feed_formula_create' %}" class="btn btn-primary btn-sm">New</a><ul>{% for f in formulas %}<li>{{ f.name }} ({{ f.get_breeder_type_display }})</li>{% empty %}<li>None</li>{% endfor %}</ul>{% endblock %}
+

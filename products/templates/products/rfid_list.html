@@ -1,0 +1,2 @@
+{% extends 'base.html' %}{% block content %}<h1>RFID Tags</h1><a href="{% url 'rfid_tag_create' %}" class="btn btn-primary btn-sm">New</a><ul>{% for t in tags %}<li>{{ t.tag_uid }} {% if t.assigned_batch %}- Batch {{ t.assigned_batch.id }}{% endif %}</li>{% empty %}<li>None</li>{% endfor %}</ul>{% endblock %}
+

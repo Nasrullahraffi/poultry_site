@@ -1,0 +1,2 @@
+{% extends 'base.html' %}{% block content %}<h1>Medicines</h1><a href="{% url 'medicine_create' %}" class="btn btn-primary btn-sm">New</a><ul>{% for m in medicines %}<li>{{ m.name }}</li>{% empty %}<li>None</li>{% endfor %}</ul>{% endblock %}
+

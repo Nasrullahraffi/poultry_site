@@ -1,0 +1,2 @@
+{% extends 'base.html' %}{% block content %}<h1>Vendors</h1><a href="{% url 'vendor_create' %}" class="btn btn-primary btn-sm">New</a><ul>{% for v in vendors %}<li>{{ v.name }} {% if not v.is_active %}(inactive){% endif %}</li>{% empty %}<li>No vendors</li>{% endfor %}</ul>{% endblock %}
+
