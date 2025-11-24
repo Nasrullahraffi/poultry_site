@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Batch {{ batch.id }} - {{ batch.get_breeder_type_display }}</h2>
+<p>Hatch: {{ batch.hatch_date }} | Initial: {{ batch.initial_count }} | Age: {{ batch.age_days }} days</p>
+<p>Location: {{ batch.farm_location }} | Source: {{ batch.source }}</p>
+<hr>
+<h4>Health Checks <a href="{% url 'products:health_check_add' batch.id %}" class="btn btn-sm btn-outline-primary">Add</a></h4>
+<ul>{% for hc in health_checks %}<li>{{ hc.check_date }} diseased {{ hc.diseased_count }} mortality {{ hc.mortality_count }}</li>{% empty %}<li>None</li>{% endfor %}</ul>
+<h4>Feed Schedules <a href="{% url 'products:feed_schedule_add' batch.id %}" class="btn btn-sm btn-outline-primary">Add</a></h4>
+<ul>{% for fs in feed_schedules %}<li>{{ fs.date }} {{ fs.formula.name }} {{ fs.quantity_kg }}kg</li>{% empty %}<li>None</li>{% endfor %}</ul>
+<h4>Treatments <a href="{% url 'products:treatment_add' batch.id %}" class="btn btn-sm btn-outline-primary">Add</a></h4>
+<ul>{% for tr in treatments %}<li>{{ tr.date_administered }} {{ tr.medicine.name }} {{ tr.dosage }}</li>{% empty %}<li>None</li>{% endfor %}</ul>
+<h4>Disease Cases <a href="{% url 'products:disease_case_add' batch.id %}" class="btn btn-sm btn-outline-primary">Add</a></h4>
+<ul>{% for dc in disease_cases %}<li>{{ dc.date_detected }} {{ dc.disease.name }} affected {{ dc.affected_count }} status {{ dc.get_status_display }}</li>{% empty %}<li>None</li>{% endfor %}</ul>
+<h4>RFID Tags</h4>
+<ul>{% for tag in rfid_tags %}<li>{{ tag.tag_uid }}</li>{% empty %}<li>None</li>{% endfor %}</ul>
+{% endblock %}
