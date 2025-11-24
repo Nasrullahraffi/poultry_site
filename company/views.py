@@ -12,7 +12,7 @@ from django.contrib.auth import authenticate
 def companyView(request):
     if request.method == "POST":
         form = Company_Form(request.POST)
-        if form.is_valid :
+        if form.is_valid():
             form.save()
     else :
         form = Company_Form()

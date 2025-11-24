@@ -10,5 +10,5 @@ class Company_Model(models.Model):
     company_email = models.EmailField()
     company_phone = models.IntegerField()
 
-def __str__(self):
-    return self.company_name
+    def __str__(self):
+        return self.company_name

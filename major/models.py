@@ -37,10 +37,9 @@ class Breeder_Model(models.Model):
     breeder_type = models.CharField(choices=BREEDER_CHOICES,max_length=100)
     breeder_age = models.IntegerField()
     
+    def __str__(self):
+        return self.breeder_type
 
-def __str__(self):
-    return self.breeder_type
-    
 
 
 
@@ -53,5 +52,5 @@ class Distributed_among_companies(models.Model):
     diseased_chicks = models.IntegerField()
     date_of_departure = models.DateField(auto_now=False, auto_now_add=False, editable=False)
 
-def __str__(self):
-    return self.company_name
+    def __str__(self):
+        return str(self.company_name)

@@ -25,11 +25,10 @@ class Chick_Model(models.Model):
     # total_chicks = models.DecimalField(decimal_places=2, max_digits=10)
     number_of_diseased_chicks = models.IntegerField(db_column='Number Of Diseased Chicks')
     chicks_age = models.IntegerField()
-    date = models.DateTimeField(auto_now=
-    True)
+    date = models.DateTimeField(auto_now=True)
 
-def __str__(self):
-    return self.breeder
+    def __str__(self):
+        return self.breeder_type
 
 
 
@@ -41,10 +40,10 @@ class Medicine_Model(models.Model):
     medicine_name = models.CharField(max_length=100)
     medicine_for_type_breed = models.CharField(choices=BREEDER_CHOICES,max_length=100)
     description = models.TextField(max_length=500)
-    date = models.DateTimeField(auto_now=
-    True)
-def __str__(self):
-    return self.medicine_name
+    date = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.medicine_name
 
         #  Disease Model
 
@@ -53,8 +52,9 @@ class Disease_Model(models.Model):
     disease_name = models.CharField(max_length=100)
     disease_in_type_of_breed = models.CharField(choices=BREEDER_CHOICES,max_length=100)
     description = models.TextField(max_length=500)
-def __str__(self):
-    return self.disease_name
+
+    def __str__(self):
+        return self.disease_name
 
         # Feed Model 
 
@@ -63,9 +63,9 @@ class Feed_Model(models.Model):
     feed_name = models.CharField(max_length=100)
     feed_type = models.CharField(choices=BREEDER_CHOICES,max_length=100)
     description = models.TextField(max_length=500)
-    date = models.DateTimeField(auto_now=
-    True)
-def __str__(self):
-    return self.feed_name
+    date = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.feed_name
 
 

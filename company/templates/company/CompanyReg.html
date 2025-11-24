@@ -22,7 +22,7 @@
        {{fm.label_tag}} {{fm}} <small class="text-danger">{{fm.errors | striptags}}</small>
     </div>
     {% endfor %}
-    <input type="submit" href="{5 url "login" }" value="Submit" class='btn btn-primary'> <br>
+    <input type="submit" value="Submit" class='btn btn-primary'> <br>
     <div class="text-center text-primary fw-bold"><small>Existing Taru ? <a href="{% url 'login' %}"
        class="text-danger">LogIn</a> </small></div>
        {% if form.non_field_errors %}
