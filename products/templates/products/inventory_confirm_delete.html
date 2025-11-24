@@ -1,0 +1,2 @@
+{% extends 'base.html' %}{% block content %}<h2>Delete Inventory Product {{ object.sku }}</h2><p>Are you sure?</p><form method="post">{% csrf_token %}<button class="btn btn-danger">Confirm Delete</button> <a href="{% url 'products:inventory_list' %}" class="btn btn-secondary">Cancel</a></form>{% endblock %}
+

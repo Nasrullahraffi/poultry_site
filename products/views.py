@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.db import transaction
 from django.views import View
 from django.views.generic import (
-    ListView, DetailView, CreateView
+    ListView, DetailView, CreateView, UpdateView, DeleteView
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -297,3 +297,192 @@ class RFIDTagCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         messages.success(self.request, 'RFID tag added.')
         return super().form_valid(form)
+
+# ---------------------------------------------------------------------------
+# Additional CRUD: Update / Delete Views
+# ---------------------------------------------------------------------------
+class BatchUpdateView(LoginRequiredMixin, UpdateView):
+    model = ChickBatch
+    form_class = ChickBatchForm
+    template_name = 'products/batch_form.html'
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Batch updated.')
+        obj = form.save()
+        return redirect('products:batch_detail', pk=obj.pk)
+
+class BatchDeleteView(LoginRequiredMixin, DeleteView):
+    model = ChickBatch
+    template_name = 'products/batch_confirm_delete.html'
+    success_url = reverse_lazy('products:batch_list')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Batch deleted.')
+        return super().delete(request, *args, **kwargs)
+
+class FeedFormulaUpdateView(LoginRequiredMixin, UpdateView):
+    model = FeedFormula
+    form_class = FeedFormulaForm
+    template_name = 'products/feed_formula_form.html'
+    success_url = reverse_lazy('products:feed_formula_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Feed formula updated.')
+        return super().form_valid(form)
+
+class FeedFormulaDeleteView(LoginRequiredMixin, DeleteView):
+    model = FeedFormula
+    template_name = 'products/feed_formula_confirm_delete.html'
+    success_url = reverse_lazy('products:feed_formula_list')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Feed formula deleted.')
+        return super().delete(request, *args, **kwargs)
+
+class MedicineUpdateView(LoginRequiredMixin, UpdateView):
+    model = MedicineProduct
+    form_class = MedicineProductForm
+    template_name = 'products/medicine_form.html'
+    success_url = reverse_lazy('products:medicine_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Medicine updated.')
+        return super().form_valid(form)
+
+class MedicineDeleteView(LoginRequiredMixin, DeleteView):
+    model = MedicineProduct
+    template_name = 'products/medicine_confirm_delete.html'
+    success_url = reverse_lazy('products:medicine_list')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Medicine deleted.')
+        return super().delete(request, *args, **kwargs)
+
+class DiseaseCatalogUpdateView(LoginRequiredMixin, UpdateView):
+    model = DiseaseCatalog
+    form_class = DiseaseCatalogForm
+    template_name = 'products/disease_catalog_form.html'
+    success_url = reverse_lazy('products:disease_catalog_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Disease catalog entry updated.')
+        return super().form_valid(form)
+
+class DiseaseCatalogDeleteView(LoginRequiredMixin, DeleteView):
+    model = DiseaseCatalog
+    template_name = 'products/disease_catalog_confirm_delete.html'
+    success_url = reverse_lazy('products:disease_catalog_list')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Disease catalog entry deleted.')
+        return super().delete(request, *args, **kwargs)
+
+class InventoryUpdateView(LoginRequiredMixin, UpdateView):
+    model = InventoryProduct
+    form_class = InventoryProductForm
+    template_name = 'products/inventory_form.html'
+    success_url = reverse_lazy('products:inventory_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Inventory product updated.')
+        return super().form_valid(form)
+
+class InventoryDeleteView(LoginRequiredMixin, DeleteView):
+    model = InventoryProduct
+    template_name = 'products/inventory_confirm_delete.html'
+    success_url = reverse_lazy('products:inventory_list')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Inventory product deleted.')
+        return super().delete(request, *args, **kwargs)
+
+class VendorUpdateView(LoginRequiredMixin, UpdateView):
+    model = Vendor
+    form_class = VendorForm
+    template_name = 'products/vendor_form.html'
+    success_url = reverse_lazy('products:vendor_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Vendor updated.')
+        return super().form_valid(form)
+
+class VendorDeleteView(LoginRequiredMixin, DeleteView):
+    model = Vendor
+    template_name = 'products/vendor_confirm_delete.html'
+    success_url = reverse_lazy('products:vendor_list')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Vendor deleted.')
+        return super().delete(request, *args, **kwargs)
+
+class RFIDTagUpdateView(LoginRequiredMixin, UpdateView):
+    model = RFIDTag
+    form_class = RFIDTagForm
+    template_name = 'products/rfid_form.html'
+    success_url = reverse_lazy('products:rfid_tag_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'RFID tag updated.')
+        return super().form_valid(form)
+
+class RFIDTagDeleteView(LoginRequiredMixin, DeleteView):
+    model = RFIDTag
+    template_name = 'products/rfid_confirm_delete.html'
+    success_url = reverse_lazy('products:rfid_tag_list')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'RFID tag deleted.')
+        return super().delete(request, *args, **kwargs)
+
+class PurchaseOrderDetailView(LoginRequiredMixin, DetailView):
+    model = PurchaseOrder
+    template_name = 'products/purchase_order_detail.html'
+    context_object_name = 'order'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['items'] = self.object.items.select_related('product').all()
+        return ctx
+
+class PurchaseOrderUpdateView(LoginRequiredMixin, View):
+    template_name = 'products/purchase_order_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.po = get_object_or_404(PurchaseOrder, pk=kwargs['pk'])
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, pk):
+        form = PurchaseOrderForm(instance=self.po)
+        formset = PurchaseOrderItemFormSet(instance=self.po)
+        return render(request, self.template_name, {'form': form, 'formset': formset, 'update': True})
+
+    @transaction.atomic
+    def post(self, request, pk):
+        form = PurchaseOrderForm(request.POST, instance=self.po)
+        formset = PurchaseOrderItemFormSet(request.POST, instance=self.po)
+        if form.is_valid() and formset.is_valid():
+            po = form.save()
+            items = formset.save(commit=False)
+            for item in items:
+                item.purchase_order = po
+                item.save()
+            for obj in formset.deleted_objects:
+                obj.delete()
+            messages.success(request, 'Purchase order updated.')
+            return redirect('products:purchase_order_detail', pk=po.pk)
+        return render(request, self.template_name, {'form': form, 'formset': formset, 'update': True})
+
+class PurchaseOrderDeleteView(LoginRequiredMixin, DeleteView):
+    model = PurchaseOrder
+    template_name = 'products/purchase_order_confirm_delete.html'
+    success_url = reverse_lazy('products:purchase_order_list')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Purchase order deleted.')
+        return super().delete(request, *args, **kwargs)
+
+class StockMovementListView(LoginRequiredMixin, ListView):
+    model = StockMovement
+    template_name = 'products/stock_movement_list.html'
+    context_object_name = 'movements'
+    queryset = StockMovement.objects.select_related('product', 'related_batch', 'performed_by').order_by('-created_at')[:200]
