@@ -1,0 +1,14 @@
+        {% extends "base.html" %}
+        {% block body %}
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 pt-5 px-5 pb-5  bg-dark text-white" style="border-radius:20px; border:none; margin-left:290px; margin-top:100px;">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        {{form.as_p }}
+                        <input type="submit", value="submit" class="btn btn-primary mt-5">
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endblock body %}
