@@ -1,7 +1,12 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, get_object_or_404, render
+from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from django.db import transaction
+from django.views import View
+from django.views.generic import (
+    ListView, DetailView, CreateView
+)
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from products.models import (
     ChickBatch, HealthCheck, FeedFormula, FeedSchedule,
@@ -16,233 +21,251 @@ from products.forms import (
     PurchaseOrderItemFormSet, RFIDTagForm
 )
 
-# --------------------------------------------------------------
-# Utility
-# --------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# Batches
+# ---------------------------------------------------------------------------
+class BatchListView(LoginRequiredMixin, ListView):
+    model = ChickBatch
+    template_name = 'products/batch_list.html'
+    context_object_name = 'batches'
+    queryset = ChickBatch.objects.all().select_related()
 
-def _save_form(request, form, success_msg):
-    if form.is_valid():
+class BatchCreateView(LoginRequiredMixin, CreateView):
+    model = ChickBatch
+    form_class = ChickBatchForm
+    template_name = 'products/batch_form.html'
+
+    def form_valid(self, form):
         obj = form.save()
-        messages.success(request, success_msg)
-        return obj
-    return None
+        messages.success(self.request, 'Batch created.')
+        return redirect('batch_detail', pk=obj.pk)
 
-# --------------------------------------------------------------
-# Chick Batches
-# --------------------------------------------------------------
-@login_required
-def batch_list(request):
-    batches = ChickBatch.objects.select_related().all()
-    return render(request, 'products/batch_list.html', {'batches': batches})
+class BatchDetailView(LoginRequiredMixin, DetailView):
+    model = ChickBatch
+    template_name = 'products/batch_detail.html'
+    context_object_name = 'batch'
 
-@login_required
-def batch_create(request):
-    if request.method == 'POST':
-        form = ChickBatchForm(request.POST)
-        obj = _save_form(request, form, 'Batch created.')
-        if obj:
-            return redirect('batch_detail', pk=obj.pk)
-    else:
-        form = ChickBatchForm()
-    return render(request, 'products/batch_form.html', {'form': form})
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        batch = self.object
+        ctx['health_checks'] = batch.health_checks.all()
+        ctx['feed_schedules'] = batch.feed_schedules.select_related('formula').all()
+        ctx['treatments'] = batch.treatments.select_related('medicine').all()
+        ctx['disease_cases'] = batch.disease_cases.select_related('disease').all()
+        ctx['rfid_tags'] = batch.rfid_tags.all()
+        return ctx
 
-@login_required
-def batch_detail(request, pk):
-    batch = get_object_or_404(ChickBatch, pk=pk)
-    health_checks = batch.health_checks.all()
-    feed_schedules = batch.feed_schedules.select_related('formula').all()
-    treatments = batch.treatments.select_related('medicine').all()
-    disease_cases = batch.disease_cases.select_related('disease').all()
-    rfid_tags = batch.rfid_tags.all()
-    return render(request, 'products/batch_detail.html', {
-        'batch': batch,
-        'health_checks': health_checks,
-        'feed_schedules': feed_schedules,
-        'treatments': treatments,
-        'disease_cases': disease_cases,
-        'rfid_tags': rfid_tags,
-    })
+# ---------------------------------------------------------------------------
+# Health Check Create
+# ---------------------------------------------------------------------------
+class HealthCheckCreateView(LoginRequiredMixin, CreateView):
+    model = HealthCheck
+    form_class = HealthCheckForm
+    template_name = 'products/healthcheck_form.html'
 
-# --------------------------------------------------------------
-# Health Checks
-# --------------------------------------------------------------
-@login_required
-def health_check_add(request, batch_pk):
-    batch = get_object_or_404(ChickBatch, pk=batch_pk)
-    if request.method == 'POST':
-        form = HealthCheckForm(request.POST)
-        if form.is_valid():
-            hc = form.save(commit=False)
-            hc.batch = batch
-            hc.save()
-            messages.success(request, 'Health check logged.')
-            return redirect('batch_detail', pk=batch.pk)
-    else:
-        form = HealthCheckForm()
-    return render(request, 'products/healthcheck_form.html', {'form': form, 'batch': batch})
+    def dispatch(self, request, *args, **kwargs):
+        self.batch = get_object_or_404(ChickBatch, pk=kwargs['batch_pk'])
+        return super().dispatch(request, *args, **kwargs)
 
-# --------------------------------------------------------------
-# Feed Formula & Scheduling
-# --------------------------------------------------------------
-@login_required
-def feed_formula_list(request):
-    formulas = FeedFormula.objects.all()
-    return render(request, 'products/feed_formula_list.html', {'formulas': formulas})
+    def form_valid(self, form):
+        hc = form.save(commit=False)
+        hc.batch = self.batch
+        hc.save()
+        messages.success(self.request, 'Health check logged.')
+        return redirect('batch_detail', pk=self.batch.pk)
 
-@login_required
-def feed_formula_create(request):
-    if request.method == 'POST':
-        form = FeedFormulaForm(request.POST)
-        obj = _save_form(request, form, 'Feed formula created.')
-        if obj:
-            return redirect('feed_formula_list')
-    else:
-        form = FeedFormulaForm()
-    return render(request, 'products/feed_formula_form.html', {'form': form})
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['batch'] = self.batch
+        return ctx
 
-@login_required
-def feed_schedule_add(request, batch_pk):
-    batch = get_object_or_404(ChickBatch, pk=batch_pk)
-    if request.method == 'POST':
-        form = FeedScheduleForm(request.POST)
-        if form.is_valid():
-            fs = form.save(commit=False)
-            fs.batch = batch
-            fs.save()
-            messages.success(request, 'Feed schedule added.')
-            return redirect('batch_detail', pk=batch.pk)
-    else:
-        form = FeedScheduleForm()
-    return render(request, 'products/feed_schedule_form.html', {'form': form, 'batch': batch})
+# ---------------------------------------------------------------------------
+# Feed Formula List/Create & Feed Schedule Create
+# ---------------------------------------------------------------------------
+class FeedFormulaListView(LoginRequiredMixin, ListView):
+    model = FeedFormula
+    template_name = 'products/feed_formula_list.html'
+    context_object_name = 'formulas'
 
-# --------------------------------------------------------------
-# Medicine & Treatments
-# --------------------------------------------------------------
-@login_required
-def medicine_list(request):
-    meds = MedicineProduct.objects.all()
-    return render(request, 'products/medicine_list.html', {'medicines': meds})
+class FeedFormulaCreateView(LoginRequiredMixin, CreateView):
+    model = FeedFormula
+    form_class = FeedFormulaForm
+    template_name = 'products/feed_formula_form.html'
+    success_url = reverse_lazy('feed_formula_list')
 
-@login_required
-def medicine_create(request):
-    if request.method == 'POST':
-        form = MedicineProductForm(request.POST)
-        obj = _save_form(request, form, 'Medicine added.')
-        if obj:
-            return redirect('medicine_list')
-    else:
-        form = MedicineProductForm()
-    return render(request, 'products/medicine_form.html', {'form': form})
+    def form_valid(self, form):
+        messages.success(self.request, 'Feed formula created.')
+        return super().form_valid(form)
 
-@login_required
-def treatment_add(request, batch_pk):
-    batch = get_object_or_404(ChickBatch, pk=batch_pk)
-    if request.method == 'POST':
-        form = TreatmentRecordForm(request.POST)
-        if form.is_valid():
-            tr = form.save(commit=False)
-            tr.batch = batch
-            tr.save()
-            messages.success(request, 'Treatment recorded.')
-            return redirect('batch_detail', pk=batch.pk)
-    else:
-        form = TreatmentRecordForm()
-    return render(request, 'products/treatment_form.html', {'form': form, 'batch': batch})
+class FeedScheduleCreateView(LoginRequiredMixin, CreateView):
+    model = FeedSchedule
+    form_class = FeedScheduleForm
+    template_name = 'products/feed_schedule_form.html'
 
-# --------------------------------------------------------------
-# Disease Catalog & Cases
-# --------------------------------------------------------------
-@login_required
-def disease_catalog_list(request):
-    diseases = DiseaseCatalog.objects.all()
-    return render(request, 'products/disease_catalog_list.html', {'diseases': diseases})
+    def dispatch(self, request, *args, **kwargs):
+        self.batch = get_object_or_404(ChickBatch, pk=kwargs['batch_pk'])
+        return super().dispatch(request, *args, **kwargs)
 
-@login_required
-def disease_catalog_create(request):
-    if request.method == 'POST':
-        form = DiseaseCatalogForm(request.POST)
-        obj = _save_form(request, form, 'Disease catalog entry added.')
-        if obj:
-            return redirect('disease_catalog_list')
-    else:
-        form = DiseaseCatalogForm()
-    return render(request, 'products/disease_catalog_form.html', {'form': form})
+    def form_valid(self, form):
+        fs = form.save(commit=False)
+        fs.batch = self.batch
+        fs.save()
+        messages.success(self.request, 'Feed schedule added.')
+        return redirect('batch_detail', pk=self.batch.pk)
 
-@login_required
-def disease_case_add(request, batch_pk):
-    batch = get_object_or_404(ChickBatch, pk=batch_pk)
-    if request.method == 'POST':
-        form = DiseaseCaseForm(request.POST)
-        if form.is_valid():
-            dc = form.save(commit=False)
-            dc.batch = batch
-            dc.save()
-            messages.success(request, 'Disease case logged.')
-            return redirect('batch_detail', pk=batch.pk)
-    else:
-        form = DiseaseCaseForm()
-    return render(request, 'products/disease_case_form.html', {'form': form, 'batch': batch})
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['batch'] = self.batch
+        return ctx
 
-# --------------------------------------------------------------
-# Inventory & Stock
-# --------------------------------------------------------------
-@login_required
-def inventory_list(request):
-    products = InventoryProduct.objects.all()
-    return render(request, 'products/inventory_list.html', {'products': products})
+# ---------------------------------------------------------------------------
+# Medicine list/create & Treatment create
+# ---------------------------------------------------------------------------
+class MedicineListView(LoginRequiredMixin, ListView):
+    model = MedicineProduct
+    template_name = 'products/medicine_list.html'
+    context_object_name = 'medicines'
 
-@login_required
-def inventory_create(request):
-    if request.method == 'POST':
-        form = InventoryProductForm(request.POST)
-        obj = _save_form(request, form, 'Inventory product created.')
-        if obj:
-            return redirect('inventory_list')
-    else:
-        form = InventoryProductForm()
-    return render(request, 'products/inventory_form.html', {'form': form})
+class MedicineCreateView(LoginRequiredMixin, CreateView):
+    model = MedicineProduct
+    form_class = MedicineProductForm
+    template_name = 'products/medicine_form.html'
+    success_url = reverse_lazy('medicine_list')
 
-@login_required
-def stock_movement_add(request):
-    if request.method == 'POST':
-        form = StockMovementForm(request.POST)
-        if form.is_valid():
-            sm = form.save()
-            sm.apply()
-            messages.success(request, 'Stock movement applied.')
-            return redirect('inventory_list')
-    else:
-        form = StockMovementForm()
-    return render(request, 'products/stock_movement_form.html', {'form': form})
+    def form_valid(self, form):
+        messages.success(self.request, 'Medicine added.')
+        return super().form_valid(form)
 
-# --------------------------------------------------------------
-# Vendors & Purchase Orders
-# --------------------------------------------------------------
-@login_required
-def vendor_list(request):
-    vendors = Vendor.objects.filter(is_active=True)
-    return render(request, 'products/vendor_list.html', {'vendors': vendors})
+class TreatmentCreateView(LoginRequiredMixin, CreateView):
+    model = TreatmentRecord
+    form_class = TreatmentRecordForm
+    template_name = 'products/treatment_form.html'
 
-@login_required
-def vendor_create(request):
-    if request.method == 'POST':
-        form = VendorForm(request.POST)
-        obj = _save_form(request, form, 'Vendor added.')
-        if obj:
-            return redirect('vendor_list')
-    else:
-        form = VendorForm()
-    return render(request, 'products/vendor_form.html', {'form': form})
+    def dispatch(self, request, *args, **kwargs):
+        self.batch = get_object_or_404(ChickBatch, pk=kwargs['batch_pk'])
+        return super().dispatch(request, *args, **kwargs)
 
-@login_required
-def purchase_order_list(request):
-    orders = PurchaseOrder.objects.select_related('vendor').all()
-    return render(request, 'products/purchase_order_list.html', {'orders': orders})
+    def form_valid(self, form):
+        tr = form.save(commit=False)
+        tr.batch = self.batch
+        tr.save()
+        messages.success(self.request, 'Treatment recorded.')
+        return redirect('batch_detail', pk=self.batch.pk)
 
-@login_required
-@transaction.atomic
-def purchase_order_create(request):
-    if request.method == 'POST':
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['batch'] = self.batch
+        return ctx
+
+# ---------------------------------------------------------------------------
+# Disease catalog list/create & case create
+# ---------------------------------------------------------------------------
+class DiseaseCatalogListView(LoginRequiredMixin, ListView):
+    model = DiseaseCatalog
+    template_name = 'products/disease_catalog_list.html'
+    context_object_name = 'diseases'
+
+class DiseaseCatalogCreateView(LoginRequiredMixin, CreateView):
+    model = DiseaseCatalog
+    form_class = DiseaseCatalogForm
+    template_name = 'products/disease_catalog_form.html'
+    success_url = reverse_lazy('disease_catalog_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Disease catalog entry added.')
+        return super().form_valid(form)
+
+class DiseaseCaseCreateView(LoginRequiredMixin, CreateView):
+    model = DiseaseCase
+    form_class = DiseaseCaseForm
+    template_name = 'products/disease_case_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.batch = get_object_or_404(ChickBatch, pk=kwargs['batch_pk'])
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        dc = form.save(commit=False)
+        dc.batch = self.batch
+        dc.save()
+        messages.success(self.request, 'Disease case logged.')
+        return redirect('batch_detail', pk=self.batch.pk)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['batch'] = self.batch
+        return ctx
+
+# ---------------------------------------------------------------------------
+# Inventory list/create & stock movement create
+# ---------------------------------------------------------------------------
+class InventoryListView(LoginRequiredMixin, ListView):
+    model = InventoryProduct
+    template_name = 'products/inventory_list.html'
+    context_object_name = 'products'
+
+class InventoryCreateView(LoginRequiredMixin, CreateView):
+    model = InventoryProduct
+    form_class = InventoryProductForm
+    template_name = 'products/inventory_form.html'
+    success_url = reverse_lazy('inventory_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Inventory product created.')
+        return super().form_valid(form)
+
+class StockMovementCreateView(LoginRequiredMixin, CreateView):
+    model = StockMovement
+    form_class = StockMovementForm
+    template_name = 'products/stock_movement_form.html'
+    success_url = reverse_lazy('inventory_list')
+
+    def form_valid(self, form):
+        sm = form.save()
+        sm.apply()
+        messages.success(self.request, 'Stock movement applied.')
+        return redirect('inventory_list')
+
+# ---------------------------------------------------------------------------
+# Vendor list/create
+# ---------------------------------------------------------------------------
+class VendorListView(LoginRequiredMixin, ListView):
+    model = Vendor
+    template_name = 'products/vendor_list.html'
+    context_object_name = 'vendors'
+
+    def get_queryset(self):
+        return Vendor.objects.filter(is_active=True)
+
+class VendorCreateView(LoginRequiredMixin, CreateView):
+    model = Vendor
+    form_class = VendorForm
+    template_name = 'products/vendor_form.html'
+    success_url = reverse_lazy('vendor_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Vendor added.')
+        return super().form_valid(form)
+
+# ---------------------------------------------------------------------------
+# Purchase Orders list/create with inline formset
+# ---------------------------------------------------------------------------
+class PurchaseOrderListView(LoginRequiredMixin, ListView):
+    model = PurchaseOrder
+    template_name = 'products/purchase_order_list.html'
+    context_object_name = 'orders'
+    queryset = PurchaseOrder.objects.select_related('vendor').all()
+
+class PurchaseOrderCreateView(LoginRequiredMixin, View):
+    template_name = 'products/purchase_order_form.html'
+
+    def get(self, request):
+        form = PurchaseOrderForm()
+        formset = PurchaseOrderItemFormSet()
+        return render(request, self.template_name, {'form': form, 'formset': formset})
+
+    @transaction.atomic
+    def post(self, request):
         form = PurchaseOrderForm(request.POST)
         formset = PurchaseOrderItemFormSet(request.POST)
         if form.is_valid() and formset.is_valid():
@@ -255,26 +278,22 @@ def purchase_order_create(request):
                 obj.delete()
             messages.success(request, 'Purchase order created.')
             return redirect('purchase_order_list')
-    else:
-        form = PurchaseOrderForm()
-        formset = PurchaseOrderItemFormSet()
-    return render(request, 'products/purchase_order_form.html', {'form': form, 'formset': formset})
+        return render(request, self.template_name, {'form': form, 'formset': formset})
 
-# --------------------------------------------------------------
-# RFID Tags
-# --------------------------------------------------------------
-@login_required
-def rfid_tag_list(request):
-    tags = RFIDTag.objects.all()
-    return render(request, 'products/rfid_list.html', {'tags': tags})
+# ---------------------------------------------------------------------------
+# RFID Tags list/create
+# ---------------------------------------------------------------------------
+class RFIDTagListView(LoginRequiredMixin, ListView):
+    model = RFIDTag
+    template_name = 'products/rfid_list.html'
+    context_object_name = 'tags'
 
-@login_required
-def rfid_tag_create(request):
-    if request.method == 'POST':
-        form = RFIDTagForm(request.POST)
-        obj = _save_form(request, form, 'RFID tag added.')
-        if obj:
-            return redirect('rfid_tag_list')
-    else:
-        form = RFIDTagForm()
-    return render(request, 'products/rfid_form.html', {'form': form})
+class RFIDTagCreateView(LoginRequiredMixin, CreateView):
+    model = RFIDTag
+    form_class = RFIDTagForm
+    template_name = 'products/rfid_form.html'
+    success_url = reverse_lazy('rfid_tag_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'RFID tag added.')
+        return super().form_valid(form)
