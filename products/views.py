@@ -18,27 +18,67 @@ from products.forms import (
     MedicineProductForm, TreatmentRecordForm, DiseaseCatalogForm, DiseaseCaseForm,
     InventoryProductForm
 )
+from company.models import CompanyMembership
+
+
+class CompanyScopedMixin:
+    """
+    Mixin to automatically scope querysets to user's company
+    """
+    def get_user_company(self):
+        """Get the active company for the logged-in user"""
+        membership = CompanyMembership.objects.filter(
+            user=self.request.user,
+            is_active=True
+        ).select_related('company').first()
+
+        if not membership:
+            messages.error(self.request, 'You are not associated with any active company.')
+            return None
+
+        return membership.company
+
+    def get_queryset(self):
+        """Filter queryset by user's company"""
+        qs = super().get_queryset()
+        company = self.get_user_company()
+
+        if company and hasattr(qs.model, 'company'):
+            return qs.filter(company=company)
+        return qs
+
+    def form_valid(self, form):
+        """Automatically set company on form save"""
+        company = self.get_user_company()
+
+        if not company:
+            messages.error(self.request, 'Cannot save: No active company found.')
+            return redirect('company:dashboard')
+
+        if hasattr(form.instance, 'company'):
+            form.instance.company = company
+
+        return super().form_valid(form)
 
 # ---------------------------------------------------------------------------
 # Batches
 # ---------------------------------------------------------------------------
-class BatchListView(LoginRequiredMixin, ListView):
+class BatchListView(LoginRequiredMixin, CompanyScopedMixin, ListView):
     model = ChickBatch
     template_name = 'products/batch_list.html'
     context_object_name = 'batches'
-    queryset = ChickBatch.objects.all().select_related()
 
-class BatchCreateView(LoginRequiredMixin, CreateView):
+class BatchCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
     model = ChickBatch
     form_class = ChickBatchForm
     template_name = 'products/batch_form.html'
 
     def form_valid(self, form):
-        obj = form.save()
+        result = super().form_valid(form)
         messages.success(self.request, 'Batch created.')
-        return redirect('products:batch_detail', pk=obj.pk)
+        return redirect('products:batch_detail', pk=self.object.pk)
 
-class BatchDetailView(LoginRequiredMixin, DetailView):
+class BatchDetailView(LoginRequiredMixin, CompanyScopedMixin, DetailView):
     model = ChickBatch
     template_name = 'products/batch_detail.html'
     context_object_name = 'batch'
@@ -51,6 +91,25 @@ class BatchDetailView(LoginRequiredMixin, DetailView):
         ctx['treatments'] = batch.treatments.select_related('medicine').all()
         ctx['disease_cases'] = batch.disease_cases.select_related('disease').all()
         return ctx
+
+class BatchUpdateView(LoginRequiredMixin, CompanyScopedMixin, UpdateView):
+    model = ChickBatch
+    form_class = ChickBatchForm
+    template_name = 'products/batch_form.html'
+
+    def form_valid(self, form):
+        result = super().form_valid(form)
+        messages.success(self.request, 'Batch updated.')
+        return redirect('products:batch_detail', pk=self.object.pk)
+
+class BatchDeleteView(LoginRequiredMixin, CompanyScopedMixin, DeleteView):
+    model = ChickBatch
+    template_name = 'products/batch_confirm_delete.html'
+    success_url = reverse_lazy('products:batch_list')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Batch deleted.')
+        return super().delete(request, *args, **kwargs)
 
 # ---------------------------------------------------------------------------
 # Health Check Create
@@ -214,25 +273,6 @@ class InventoryCreateView(LoginRequiredMixin, CreateView):
 # ---------------------------------------------------------------------------
 # Additional CRUD: Update / Delete Views
 # ---------------------------------------------------------------------------
-class BatchUpdateView(LoginRequiredMixin, UpdateView):
-    model = ChickBatch
-    form_class = ChickBatchForm
-    template_name = 'products/batch_form.html'
-
-    def form_valid(self, form):
-        messages.success(self.request, 'Batch updated.')
-        obj = form.save()
-        return redirect('products:batch_detail', pk=obj.pk)
-
-class BatchDeleteView(LoginRequiredMixin, DeleteView):
-    model = ChickBatch
-    template_name = 'products/batch_confirm_delete.html'
-    success_url = reverse_lazy('products:batch_list')
-
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, 'Batch deleted.')
-        return super().delete(request, *args, **kwargs)
-
 class FeedFormulaUpdateView(LoginRequiredMixin, UpdateView):
     model = FeedFormula
     form_class = FeedFormulaForm

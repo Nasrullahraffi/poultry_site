@@ -44,15 +44,26 @@ class TimeStampedModel(models.Model):
     class Meta:
         abstract = True
 
+class CompanyScopedModel(TimeStampedModel):
+    """
+    Abstract base for models that belong to a company
+    """
+    company = models.ForeignKey('company.Company', on_delete=models.CASCADE, related_name='%(class)s_set')
+
+    class Meta:
+        abstract = True
+
 # ---------------------------------------------------------------------------
 # Chick Batch (manages group of chicks)
 # ---------------------------------------------------------------------------
-class ChickBatch(TimeStampedModel):
+class ChickBatch(CompanyScopedModel):
     breeder_type = models.CharField(max_length=16, choices=BreederType.choices)
     hatch_date = models.DateField()
     initial_count = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    current_count = models.PositiveIntegerField(null=True, blank=True, help_text="Current live count")
     farm_location = models.CharField(max_length=120, blank=True)
     source = models.CharField(max_length=120, blank=True, help_text="Supplier or hatchery")
+    status = models.CharField(max_length=16, choices=ChickStatus.choices, default=ChickStatus.ACTIVE)
     notes = models.TextField(blank=True, max_length=1000)
 
     @property
@@ -64,15 +75,23 @@ class ChickBatch(TimeStampedModel):
         latest = self.health_checks.order_by('-check_date').first()
         return latest if latest else None
 
+    @property
+    def mortality_rate(self):
+        if self.current_count is not None and self.initial_count > 0:
+            return ((self.initial_count - self.current_count) / self.initial_count) * 100
+        return 0
+
     def __str__(self):
         return f"Batch #{self.id} {self.breeder_type} ({self.initial_count})"
 
     class Meta:
         ordering = ['-hatch_date']
         indexes = [
-            models.Index(fields=['breeder_type']),
-            models.Index(fields=['hatch_date']),
+            models.Index(fields=['company', 'breeder_type']),
+            models.Index(fields=['company', 'hatch_date']),
+            models.Index(fields=['company', 'status']),
         ]
+        verbose_name_plural = "Chick Batches"
 
 # ---------------------------------------------------------------------------
 # Health Check Log per Batch
@@ -173,8 +192,8 @@ class DiseaseCase(TimeStampedModel):
 # ---------------------------------------------------------------------------
 # Inventory
 # ---------------------------------------------------------------------------
-class InventoryProduct(TimeStampedModel):
-    sku = models.CharField(max_length=40, unique=True)
+class InventoryProduct(CompanyScopedModel):
+    sku = models.CharField(max_length=40)
     name = models.CharField(max_length=120)
     category = models.CharField(max_length=16, choices=InventoryCategory.choices, default=InventoryCategory.OTHER)
     breeder_type = models.CharField(max_length=16, choices=BreederType.choices, blank=True)
@@ -193,9 +212,11 @@ class InventoryProduct(TimeStampedModel):
         return self.stock_on_hand <= self.reorder_point and self.reorder_point > 0
 
     class Meta:
+        unique_together = ('company', 'sku')
         indexes = [
-            models.Index(fields=['sku']),
-            models.Index(fields=['category']),
+            models.Index(fields=['company', 'sku']),
+            models.Index(fields=['company', 'category']),
+            models.Index(fields=['company', 'is_active']),
         ]
 
 # ---------------------------------------------------------------------------
