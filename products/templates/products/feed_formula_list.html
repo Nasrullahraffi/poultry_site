@@ -1,2 +1,82 @@
-{% extends 'base.html' %}{% block content %}<h1>Feed Formulas</h1><a href="{% url 'products:feed_formula_create' %}" class="btn btn-primary btn-sm">New</a><table class="table table-sm mt-3"><thead><tr><th>Name</th><th>Type</th><th>Actions</th></tr></thead><tbody>{% for f in formulas %}<tr><td>{{ f.name }}</td><td>{{ f.get_breeder_type_display }}</td><td><a href="{% url 'products:feed_formula_update' f.id %}" class="btn btn-sm btn-outline-secondary">Edit</a> <a href="{% url 'products:feed_formula_delete' f.id %}" class="btn btn-sm btn-outline-danger">Delete</a></td></tr>{% empty %}<tr><td colspan="3">None</td></tr>{% endfor %}</tbody></table>{% endblock %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Feed Formulas - Poultry Management{% endblock title %}
+
+{% block body %}
+<div class="container-fluid mt-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-1"><i class="bi bi-basket me-2 text-primary"></i>Feed Formulas</h1>
+                    <p class="text-muted mb-0">Manage feed recipes and nutritional plans</p>
+                </div>
+                <a href="{% url 'products:feed_formula_create' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>New Formula
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feed Formula Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card dashboard-card">
+                <div class="card-body p-0">
+                    {% if formulas %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">Name</th>
+                                        <th>Type</th>
+                                        <th>Ingredients</th>
+                                        <th>Description</th>
+                                        <th class="text-end pe-4">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for f in formulas %}
+                                        <tr>
+                                            <td class="ps-4 fw-semibold">{{ f.name }}</td>
+                                            <td>
+                                                <span class="badge bg-warning bg-opacity-10 text-warning border">
+                                                    {{ f.get_breeder_type_display }}
+                                                </span>
+                                            </td>
+                                            <td>{{ f.ingredients|default:"—"|truncatewords:8 }}</td>
+                                            <td>{{ f.description|default:"—"|truncatewords:10 }}</td>
+                                            <td class="text-end pe-4">
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="{% url 'products:feed_formula_update' f.pk %}" class="btn btn-outline-secondary" title="Edit">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <a href="{% url 'products:feed_formula_delete' f.pk %}" class="btn btn-outline-danger" title="Delete">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="bi bi-basket-fill display-4 text-muted d-block mb-3"></i>
+                            <h5 class="text-muted mb-3">No feed formulas found</h5>
+                            <p class="text-muted mb-4">Create feed formulas to plan nutritional programs</p>
+                            <a href="{% url 'products:feed_formula_create' %}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle me-2"></i>Create First Formula
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}
 

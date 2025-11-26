@@ -1,2 +1,77 @@
-{% extends 'base.html' %}{% block content %}<h1>New Medicine</h1><form method="post">{% csrf_token %}{{ form.as_p }}<button class="btn btn-success">Save</button></form>{% endblock %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}Add New{% endif %} Medicine - Poultry Management{% endblock title %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Page Header -->
+            <div class="mb-4">
+                <h1 class="h3 mb-1">
+                    <i class="bi bi-{% if form.instance.pk %}pencil{% else %}plus-circle{% endif %} me-2 text-primary"></i>
+                    {% if form.instance.pk %}Edit Medicine{% else %}Add New Medicine{% endif %}
+                </h1>
+                <p class="text-muted mb-0">{% if form.instance.pk %}Update medicine information{% else %}Add a new medicine to your catalog{% endif %}</p>
+            </div>
+
+            <!-- Form Card -->
+            <div class="card dashboard-card">
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        {% for field in form %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                                    {{ field.label }}
+                                    {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                                </label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <div class="form-text">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% if field.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ field.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+
+                        <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                            <a href="{% url 'products:medicine_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-check-circle me-2"></i>{% if form.instance.pk %}Update{% else %}Add{% endif %} Medicine
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control, .form-select, textarea.form-control {
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        padding: 0.6rem 0.75rem;
+    }
+
+    .form-control:focus, .form-select:focus, textarea.form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.2rem rgba(44, 85, 48, 0.15);
+    }
+</style>
+{% endblock body %}
 

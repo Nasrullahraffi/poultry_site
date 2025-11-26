@@ -72,6 +72,7 @@ class BatchCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
     model = ChickBatch
     form_class = ChickBatchForm
     template_name = 'products/batch_form.html'
+    success_url = reverse_lazy('products:batch_list')
 
     def form_valid(self, form):
         result = super().form_valid(form)

@@ -1,17 +1,255 @@
 {% extends 'base.html' %}
-{% block content %}
-<h2>Batch {{ batch.id }} - {{ batch.get_breeder_type_display }}</h2>
-<p>Hatch: {{ batch.hatch_date }} | Initial: {{ batch.initial_count }} | Age: {{ batch.age_days }} days</p>
-<p>Location: {{ batch.farm_location }} | Source: {{ batch.source }}</p>
-<hr>
-<h4>Health Checks <a href="{% url 'products:health_check_add' batch.id %}" class="btn btn-sm btn-outline-primary">Add</a></h4>
-<ul>{% for hc in health_checks %}<li>{{ hc.check_date }} diseased {{ hc.diseased_count }} mortality {{ hc.mortality_count }}</li>{% empty %}<li>None</li>{% endfor %}</ul>
-<h4>Feed Schedules <a href="{% url 'products:feed_schedule_add' batch.id %}" class="btn btn-sm btn-outline-primary">Add</a></h4>
-<ul>{% for fs in feed_schedules %}<li>{{ fs.date }} {{ fs.formula.name }} {{ fs.quantity_kg }}kg</li>{% empty %}<li>None</li>{% endfor %}</ul>
-<h4>Treatments <a href="{% url 'products:treatment_add' batch.id %}" class="btn btn-sm btn-outline-primary">Add</a></h4>
-<ul>{% for tr in treatments %}<li>{{ tr.date_administered }} {{ tr.medicine.name }} {{ tr.dosage }}</li>{% empty %}<li>None</li>{% endfor %}</ul>
-<h4>Disease Cases <a href="{% url 'products:disease_case_add' batch.id %}" class="btn btn-sm btn-outline-primary">Add</a></h4>
-<ul>{% for dc in disease_cases %}<li>{{ dc.date_detected }} {{ dc.disease.name }} affected {{ dc.affected_count }} status {{ dc.get_status_display }}</li>{% empty %}<li>None</li>{% endfor %}</ul>
-<h4>RFID Tags</h4>
-<ul>{% for tag in rfid_tags %}<li>{{ tag.tag_uid }}</li>{% empty %}<li>None</li>{% endfor %}</ul>
-{% endblock %}
+{% load static %}
+
+{% block title %}Batch #{{ batch.id }} Details - Poultry Management{% endblock title %}
+
+{% block body %}
+<div class="container-fluid mt-4">
+    <!-- Batch Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card dashboard-card">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="d-flex align-items-center mb-2">
+                                <h1 class="h3 mb-0 me-3">Batch #{{ batch.id }}</h1>
+                                <span class="badge bg-secondary">{{ batch.get_breeder_type_display }}</span>
+                                <span class="badge {% if batch.status == 'ACTIVE' %}bg-success{% elif batch.status == 'SOLD' %}bg-primary{% else %}bg-danger{% endif %} ms-2">
+                                    {{ batch.get_status_display|default:"Active" }}
+                                </span>
+                            </div>
+                            <div class="row g-3 mt-2">
+                                <div class="col-auto">
+                                    <span class="text-muted"><i class="bi bi-calendar3 me-1"></i>Hatch Date:</span>
+                                    <strong>{{ batch.hatch_date }}</strong>
+                                </div>
+                                <div class="col-auto">
+                                    <span class="text-muted"><i class="bi bi-egg me-1"></i>Initial Count:</span>
+                                    <strong>{{ batch.initial_count }}</strong>
+                                </div>
+                                <div class="col-auto">
+                                    <span class="text-muted"><i class="bi bi-hourglass-split me-1"></i>Age:</span>
+                                    <strong>{{ batch.age_days }} days</strong>
+                                </div>
+                                <div class="col-auto">
+                                    <span class="text-muted"><i class="bi bi-geo-alt me-1"></i>Location:</span>
+                                    <strong>{{ batch.farm_location|default:"N/A" }}</strong>
+                                </div>
+                                <div class="col-auto">
+                                    <span class="text-muted"><i class="bi bi-building me-1"></i>Source:</span>
+                                    <strong>{{ batch.source|default:"N/A" }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-group">
+                            <a href="{% url 'products:batch_update' batch.pk %}" class="btn btn-outline-primary">
+                                <i class="bi bi-pencil me-1"></i>Edit
+                            </a>
+                            <a href="{% url 'products:batch_delete' batch.pk %}" class="btn btn-outline-danger">
+                                <i class="bi bi-trash me-1"></i>Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Batch Details Tabs -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card dashboard-card">
+                <div class="card-header bg-white border-bottom">
+                    <ul class="nav nav-tabs card-header-tabs" id="batchTabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="health-tab" data-bs-toggle="tab" href="#health" role="tab">
+                                <i class="bi bi-heart-pulse me-2"></i>Health Checks
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="feed-tab" data-bs-toggle="tab" href="#feed" role="tab">
+                                <i class="bi bi-basket me-2"></i>Feed Schedules
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="treatment-tab" data-bs-toggle="tab" href="#treatment" role="tab">
+                                <i class="bi bi-capsule me-2"></i>Treatments
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="disease-tab" data-bs-toggle="tab" href="#disease" role="tab">
+                                <i class="bi bi-shield-exclamation me-2"></i>Disease Cases
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="batchTabsContent">
+                        <!-- Health Checks Tab -->
+                        <div class="tab-pane fade show active" id="health" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Health Check Records</h5>
+                                <a href="{% url 'products:health_check_add' batch.pk %}" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-plus-circle me-1"></i>Add Health Check
+                                </a>
+                            </div>
+                            {% if health_checks %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Diseased Count</th>
+                                                <th>Mortality Count</th>
+                                                <th>Notes</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for hc in health_checks %}
+                                                <tr>
+                                                    <td>{{ hc.check_date }}</td>
+                                                    <td><span class="badge bg-warning">{{ hc.diseased_count }}</span></td>
+                                                    <td><span class="badge bg-danger">{{ hc.mortality_count }}</span></td>
+                                                    <td>{{ hc.notes|default:"—" }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="text-center text-muted py-4">
+                                    <i class="bi bi-clipboard-x display-6 d-block mb-2"></i>
+                                    No health checks recorded yet
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Feed Schedules Tab -->
+                        <div class="tab-pane fade" id="feed" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Feed Schedule Records</h5>
+                                <a href="{% url 'products:feed_schedule_add' batch.pk %}" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-plus-circle me-1"></i>Add Feed Schedule
+                                </a>
+                            </div>
+                            {% if feed_schedules %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Formula</th>
+                                                <th>Quantity (kg)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for fs in feed_schedules %}
+                                                <tr>
+                                                    <td>{{ fs.date }}</td>
+                                                    <td>{{ fs.formula.name }}</td>
+                                                    <td><span class="badge bg-info">{{ fs.quantity_kg }} kg</span></td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="text-center text-muted py-4">
+                                    <i class="bi bi-basket-x display-6 d-block mb-2"></i>
+                                    No feed schedules recorded yet
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Treatments Tab -->
+                        <div class="tab-pane fade" id="treatment" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Treatment Records</h5>
+                                <a href="{% url 'products:treatment_add' batch.pk %}" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-plus-circle me-1"></i>Add Treatment
+                                </a>
+                            </div>
+                            {% if treatments %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Medicine</th>
+                                                <th>Dosage</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for tr in treatments %}
+                                                <tr>
+                                                    <td>{{ tr.date_administered }}</td>
+                                                    <td>{{ tr.medicine.name }}</td>
+                                                    <td>{{ tr.dosage }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="text-center text-muted py-4">
+                                    <i class="bi bi-capsule-pill display-6 d-block mb-2"></i>
+                                    No treatments recorded yet
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Disease Cases Tab -->
+                        <div class="tab-pane fade" id="disease" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Disease Case Records</h5>
+                                <a href="{% url 'products:disease_case_add' batch.pk %}" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-plus-circle me-1"></i>Add Disease Case
+                                </a>
+                            </div>
+                            {% if disease_cases %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Date Detected</th>
+                                                <th>Disease</th>
+                                                <th>Affected Count</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for dc in disease_cases %}
+                                                <tr>
+                                                    <td>{{ dc.date_detected }}</td>
+                                                    <td>{{ dc.disease.name }}</td>
+                                                    <td><span class="badge bg-danger">{{ dc.affected_count }}</span></td>
+                                                    <td><span class="badge bg-secondary">{{ dc.get_status_display }}</span></td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="text-center text-muted py-4">
+                                    <i class="bi bi-shield-check display-6 d-block mb-2"></i>
+                                    No disease cases recorded
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="row mt-3">
+        <div class="col-12">
+            <a href="{% url 'products:batch_list' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Batches
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock body %}

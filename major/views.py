@@ -5,7 +5,7 @@ from django.contrib import messages
 
 # Class-based views
 class BreederCreateView(FormView):
-    template_name = 'home_page.html'
+    template_name = 'breed_form.html'
     form_class = Breeder_Form
 
     def form_valid(self, form):
