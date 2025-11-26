@@ -1,4 +1,249 @@
-# Poultry Management System
+# Tokyo Farm - Poultry Management System
+
+A comprehensive, company-centric poultry management system built with Django. This system allows poultry farms and companies to manage their chick batches, inventory, health records, feeding schedules, and disease tracking all in one place.
+
+## 🌟 Features
+
+### Company Management
+- **Multi-tenant Architecture**: Each company operates independently with isolated data
+- **User Registration**: Complete registration flow creating both user account and company profile
+- **Company Dashboard**: Real-time statistics and quick actions
+- **Company Profile Management**: Update business details, address, and license information
+- **Role-based Access**: OWNER, MANAGER, STAFF, and VIEWER roles
+
+### Chick Batch Management
+- **Batch Tracking**: Monitor chick batches from hatch to sale/harvest
+- **Breeder Types**: Support for BROILER, LAYER, and GOLDEN breeds
+- **Live Count Tracking**: Monitor current count vs initial count
+- **Mortality Rate**: Automatic calculation of batch mortality
+- **Status Management**: ACTIVE, SOLD, DECEASED, CULLED states
+- **Age Calculation**: Automatic age tracking in days
+
+### Health Management
+- **Health Checks**: Regular health check logging per batch
+- **Disease Catalog**: Maintain database of common poultry diseases
+- **Disease Cases**: Track disease outbreaks with affected counts
+- **Treatment Records**: Log medicine administration and treatments
+- **Severity Tracking**: 1-5 severity ratings for diseases
+
+### Feed Management
+- **Feed Formulas**: Create and manage feed recipes per breeder type
+- **Feed Schedules**: Track daily/periodic feeding with quantities
+- **Batch-specific Feeding**: Link feed schedules to specific batches
+
+### Inventory Management
+- **Product Catalog**: Manage feed, medicine, equipment inventory
+- **Stock Tracking**: Real-time stock on hand monitoring
+- **Reorder Alerts**: Low stock notifications
+- **SKU Management**: Per-company unique SKU system
+- **Cost & Sale Price**: Track cost and selling prices
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Python 3.12+
+- pip
+- Virtual environment (recommended)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Nasrullahraffi/poultry_site.git
+   cd poultry_site/Poultry
+   ```
+
+2. **Create and activate virtual environment**
+   ```bash
+   python -m venv .venv
+   .venv\Scripts\activate  # Windows
+   source .venv/bin/activate  # Linux/Mac
+   ```
+
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Set up environment variables**
+   - Copy `.env.example` to `.env`
+   - Update `SECRET_KEY` and other settings as needed
+
+5. **Run migrations**
+   ```bash
+   python manage.py migrate
+   ```
+
+6. **Create superuser (optional)**
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+7. **Run development server**
+   ```bash
+   python manage.py runserver
+   ```
+
+8. **Access the application**
+   - Open browser to `http://127.0.0.1:8000`
+   - Register a new company account
+   - Start managing your poultry operations!
+
+## 📱 Usage Flow
+
+### First Time Setup
+1. Visit `/company/register/`
+2. Fill in your personal information
+3. Enter your company/farm details
+4. Click "Create Account"
+5. You're automatically logged in and redirected to dashboard
+
+### Daily Operations
+1. **Dashboard**: View statistics and recent batches
+2. **Create Batch**: Add new chick batch with hatch date and count
+3. **Health Checks**: Log regular health inspections
+4. **Feed Management**: Schedule feeding and track consumption
+5. **Inventory**: Monitor stock levels and reorder supplies
+6. **Disease Tracking**: Record any disease cases and treatments
+
+## 🗂️ Project Structure
+
+```
+Poultry/
+├── company/                 # Company management app
+│   ├── models.py           # Company & CompanyMembership models
+│   ├── views.py            # Registration, login, dashboard, profile
+│   ├── forms.py            # Company registration & profile forms
+│   ├── urls.py             # Company app routes
+│   └── templates/
+│       └── company/
+│           ├── registration.html
+│           ├── login.html
+│           ├── dashboard.html
+│           └── profile.html
+│
+├── products/               # Products/batch management app
+│   ├── models.py           # ChickBatch, Health, Feed, Medicine, Inventory
+│   ├── views.py            # CRUD views with company scoping
+│   ├── forms.py            # ModelForms for all entities
+│   ├── urls.py             # Products app routes
+│   └── templates/
+│       └── products/       # Batch, inventory, health templates
+│
+├── major/                  # Homepage & public pages
+│   └── templates/
+│       └── base.html       # Base template with navbar
+│
+└── Poultry/                # Project settings
+    ├── settings.py
+    ├── urls.py
+    └── wsgi.py
+```
+
+## 🔒 Security Features
+
+- **Data Isolation**: Users only see their company's data
+- **Authentication Required**: All management pages require login
+- **Automatic Scoping**: CompanyScopedMixin filters all queries by company
+- **Password Validation**: Django's built-in password validators
+- **CSRF Protection**: Enabled on all forms
+- **Environment Variables**: Secrets stored in .env file
+
+## 🎨 Tech Stack
+
+- **Backend**: Django 5.1.4
+- **Database**: SQLite (development) / PostgreSQL (production ready)
+- **Frontend**: Bootstrap 5.3.3 + Bootstrap Icons
+- **Authentication**: Django built-in auth system
+- **Form Handling**: Django ModelForms with crispy styling
+
+## 📊 Models Overview
+
+### Company Models
+- **Company**: Central organization entity
+- **CompanyMembership**: User-company relationship with roles
+
+### Products Models
+- **ChickBatch**: Group of chicks with tracking
+- **HealthCheck**: Health inspection records
+- **FeedFormula**: Feed recipes
+- **FeedSchedule**: Feeding schedule per batch
+- **MedicineProduct**: Medicine catalog
+- **TreatmentRecord**: Treatment administration
+- **DiseaseCatalog**: Disease database
+- **DiseaseCase**: Disease outbreak records
+- **InventoryProduct**: Inventory items
+
+## 🔧 Configuration
+
+### Environment Variables (.env)
+```env
+SECRET_KEY=your-secret-key-here
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+```
+
+### Database
+Default: SQLite (db.sqlite3)
+For production, update settings.py to use PostgreSQL:
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'poultry_db',
+        'USER': 'your_user',
+        'PASSWORD': 'your_password',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
+```
+
+## 🚧 Roadmap
+
+- [ ] Add egg production tracking for LAYER breeds
+- [ ] Multi-vendor purchasing system
+- [ ] Advanced reporting and analytics
+- [ ] Mobile app / PWA
+- [ ] REST API for integrations
+- [ ] Automated feeding schedules
+- [ ] Weight gain analysis
+- [ ] Feed conversion ratio (FCR) tracking
+- [ ] Export data to Excel/PDF
+- [ ] Email notifications for low stock
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 👥 Authors
+
+- **Nasrullah Raffi** - Initial work - [GitHub](https://github.com/Nasrullahraffi)
+
+## 🙏 Acknowledgments
+
+- Django community for the excellent framework
+- Bootstrap team for the UI components
+- All contributors who help improve this project
+
+## 📞 Support
+
+For support, email support@tokyofarm.com or open an issue in the GitHub repository.
+
+---
+
+**Built with ❤️ for the poultry farming community**
+ Management System
 
 A comprehensive Django-based web application for managing poultry farms, tracking breeders, chicks, medicines, feeds, and disease management across multiple companies.
 
