@@ -48,7 +48,7 @@ class CompanyScopedModel(TimeStampedModel):
     """
     Abstract base for models that belong to a company
     """
-    company = models.ForeignKey('company.Company', on_delete=models.CASCADE, related_name='%(class)s_set')
+    company = models.ForeignKey('company.Company', on_delete=models.CASCADE, related_name='%(class)s_set', null=True, blank=True)
 
     class Meta:
         abstract = True
