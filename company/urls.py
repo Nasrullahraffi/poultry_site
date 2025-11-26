@@ -1,13 +1,20 @@
 from django.urls import path
-from . import views
-from django.contrib.auth import views as auth_view
-from company.forms import *
+from company import views
 
 app_name = 'company'
 
 urlpatterns = [
-    path("sign", views.companyView, name="company"),
-    path('accounts/login', auth_view.LoginView.as_view(template_name='company/login.html', authentication_form=Login_Form), name='login'),
+    # Registration & Authentication
+    path('register/', views.CompanyRegistrationView.as_view(), name='register'),
+    path('login/', views.CompanyLoginView.as_view(), name='login'),
+    path('logout/', views.CompanyLogoutView.as_view(), name='logout'),
+
+    # Dashboard & Profile
+    path('dashboard/', views.CompanyDashboardView.as_view(), name='dashboard'),
+    path('profile/', views.CompanyProfileView.as_view(), name='profile'),
+
+    # Legacy routes for backward compatibility
     path('registration/', views.CompanyRegView.as_view(), name='CompanyReg'),
-    path('logout', views.logout_view, name='logout'),
 ]
+
+

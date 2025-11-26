@@ -1,23 +1,23 @@
 from django import forms
-from django.forms import inlineformset_factory
 from products.models import (
     ChickBatch, HealthCheck, FeedFormula, FeedSchedule,
     MedicineProduct, TreatmentRecord, DiseaseCatalog, DiseaseCase,
-    InventoryProduct, StockMovement, Vendor, PurchaseOrder, PurchaseOrderItem,
-    RFIDTag, MovementType, BreederType, InventoryCategory, PurchaseStatus, DiseaseCaseStatus
+    InventoryProduct, BreederType, InventoryCategory, DiseaseCaseStatus, ChickStatus
 )
 
 # --- Batch & Health -------------------------------------------------------
 class ChickBatchForm(forms.ModelForm):
     class Meta:
         model = ChickBatch
-        fields = ['breeder_type', 'hatch_date', 'initial_count', 'farm_location', 'source', 'notes']
+        fields = ['breeder_type', 'hatch_date', 'initial_count', 'current_count', 'farm_location', 'source', 'status', 'notes']
         widgets = {
             'breeder_type': forms.Select(attrs={'class': 'form-select'}),
             'hatch_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'initial_count': forms.NumberInput(attrs={'class': 'form-control'}),
+            'current_count': forms.NumberInput(attrs={'class': 'form-control'}),
             'farm_location': forms.TextInput(attrs={'class': 'form-control'}),
             'source': forms.TextInput(attrs={'class': 'form-control'}),
+            'status': forms.Select(attrs={'class': 'form-select'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
 
@@ -102,7 +102,7 @@ class DiseaseCaseForm(forms.ModelForm):
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
         }
 
-# --- Inventory & Stock ----------------------------------------------------
+# --- Inventory ----------------------------------------------------
 class InventoryProductForm(forms.ModelForm):
     class Meta:
         model = InventoryProduct
@@ -120,70 +120,7 @@ class InventoryProductForm(forms.ModelForm):
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
-class StockMovementForm(forms.ModelForm):
-    class Meta:
-        model = StockMovement
-        fields = ['product', 'movement_type', 'quantity', 'reason', 'related_batch']
-        widgets = {
-            'product': forms.Select(attrs={'class': 'form-select'}),
-            'movement_type': forms.Select(attrs={'class': 'form-select'}),
-            'quantity': forms.NumberInput(attrs={'class': 'form-control'}),
-            'reason': forms.TextInput(attrs={'class': 'form-control'}),
-            'related_batch': forms.Select(attrs={'class': 'form-select'}),
-        }
+# ---------------------------------------------------------------------------
+# NOTE: Removed forms for deleted models (Stock, Vendor, PurchaseOrder, RFID)
+# ---------------------------------------------------------------------------
 
-# --- Vendors & Purchasing -------------------------------------------------
-class VendorForm(forms.ModelForm):
-    class Meta:
-        model = Vendor
-        fields = ['name', 'contact_email', 'phone', 'is_active', 'notes']
-        widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'contact_email': forms.EmailInput(attrs={'class': 'form-control'}),
-            'phone': forms.TextInput(attrs={'class': 'form-control'}),
-            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
-        }
-
-class PurchaseOrderForm(forms.ModelForm):
-    class Meta:
-        model = PurchaseOrder
-        fields = ['vendor', 'order_date', 'expected_date', 'status', 'reference_code', 'notes']
-        widgets = {
-            'vendor': forms.Select(attrs={'class': 'form-select'}),
-            'order_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'expected_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'status': forms.Select(attrs={'class': 'form-select'}),
-            'reference_code': forms.TextInput(attrs={'class': 'form-control'}),
-            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
-        }
-
-class PurchaseOrderItemForm(forms.ModelForm):
-    class Meta:
-        model = PurchaseOrderItem
-        fields = ['product', 'quantity', 'unit_cost', 'received_quantity']
-        widgets = {
-            'product': forms.Select(attrs={'class': 'form-select'}),
-            'quantity': forms.NumberInput(attrs={'class': 'form-control'}),
-            'unit_cost': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
-            'received_quantity': forms.NumberInput(attrs={'class': 'form-control'}),
-        }
-
-PurchaseOrderItemFormSet = inlineformset_factory(
-    PurchaseOrder,
-    PurchaseOrderItem,
-    form=PurchaseOrderItemForm,
-    extra=1,
-    can_delete=True
-)
-
-# --- RFID -----------------------------------------------------------------
-class RFIDTagForm(forms.ModelForm):
-    class Meta:
-        model = RFIDTag
-        fields = ['tag_uid', 'is_active', 'assigned_batch']
-        widgets = {
-            'tag_uid': forms.TextInput(attrs={'class': 'form-control'}),
-            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'assigned_batch': forms.Select(attrs={'class': 'form-select'}),
-        }

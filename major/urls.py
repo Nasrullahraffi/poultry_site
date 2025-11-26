@@ -1,9 +1,9 @@
 from django.urls import path
-from . import views
+from .views import BreederCreateView, HomeView
 
 app_name = 'major'
 
 urlpatterns = [
-    path('major/', views.BreederView, name="breeder"),
-    path('', views.front, name="home"),
+    path('major/', BreederCreateView.as_view(), name="breeder"),
+    path('', HomeView.as_view(), name="home"),
 ]
