@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Company Dashboard - Tokyo Farm{% endblock title %}
+{% block title %}Farm Dashboard - Tokyo Farm{% endblock title %}
 
 {% block body %}
-<div class="container-fluid mt-4">
+<div class="container-fluid px-4 py-4">
     {% if messages %}
         {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-4" role="alert">
                 <div class="d-flex align-items-center">
                     <i class="bi
                         {% if message.tags == 'success' %}bi-check-circle-fill text-success
@@ -22,34 +22,34 @@
     {% endif %}
 
     {% if company %}
-        <!-- Company Header with Enhanced Design -->
+        <!-- Farm Header Section -->
         <div class="row mb-4">
             <div class="col-12">
-                <div class="dashboard-card company-header-card">
-                    <div class="card-body p-4">
-                        <div class="row align-items-center">
-                            <div class="col-md-8">
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="company-avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3">
-                                        <i class="bi bi-building fs-4"></i>
-                                    </div>
-                                    <div>
-                                        <h1 class="h3 mb-1 fw-bold text-dark">{{ company.name }}</h1>
-                                        <div class="d-flex align-items-center flex-wrap">
-                                            <span class="text-muted me-3">
-                                                <i class="bi bi-geo-alt me-1"></i> {{ company.city }}, {{ company.state_province }}
-                                            </span>
-                                            {% if membership %}
-                                                <span class="badge role-badge bg-primary">{{ membership.get_role_display }}</span>
-                                            {% endif %}
-                                        </div>
+                <div class="farm-header-card">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-center">
+                                <div class="farm-avatar">
+                                    <i class="bi bi-building"></i>
+                                </div>
+                                <div class="ms-4">
+                                    <h1 class="farm-name">{{ company.name }}</h1>
+                                    <div class="farm-details">
+                                        <span class="location">
+                                            <i class="bi bi-geo-alt"></i>
+                                            {{ company.city }}, {{ company.state_province }}
+                                        </span>
+                                        {% if membership %}
+                                            <span class="role-badge">{{ membership.get_role_display }}</span>
+                                        {% endif %}
                                     </div>
                                 </div>
-                                <p class="text-muted mb-0">Welcome to your farm management dashboard. Monitor your poultry operations and track performance.</p>
                             </div>
-                            <div class="col-md-4 text-md-end">
-                                <a href="{% url 'company:profile' %}" class="btn btn-primary btn-lg px-4">
-                                    <i class="bi bi-gear me-2"></i> Company Settings
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <div class="header-actions">
+                                <a href="{% url 'company:profile' %}" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-gear me-2"></i> Farm Settings
                                 </a>
                             </div>
                         </div>
@@ -58,95 +58,93 @@
             </div>
         </div>
 
-        <!-- Enhanced Statistics Cards -->
+        <!-- Key Performance Indicators -->
         <div class="row mb-4">
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="dashboard-card stat-card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="stat-content">
-                                <h6 class="stat-label">Total Batches</h6>
-                                <h2 class="stat-value text-primary">{{ stats.total_batches }}</h2>
-                                <p class="stat-description text-muted">Across all operations</p>
-                            </div>
-                            <div class="stat-icon-container bg-primary bg-opacity-10">
-                                <i class="bi bi-inboxes-fill text-primary"></i>
-                            </div>
-                        </div>
-                        <div class="stat-trend mt-3">
-                            <span class="badge bg-primary bg-opacity-20 text-primary">
-                                <i class="bi bi-graph-up me-1"></i> All batches
+            <div class="col-12">
+                <div class="section-header">
+                    <h3><i class="bi bi-speedometer2 me-2"></i>Farm Overview</h3>
+                    <p class="section-subtitle">Real-time performance metrics</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <!-- Total Birds Card -->
+            <div class="col-xl-3 col-md-6">
+                <div class="kpi-card bird-count">
+                    <div class="kpi-icon">
+                        <i class="bi bi-egg-fried"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <h3>{{ stats.total_chicks }}</h3>
+                        <p>Total Birds</p>
+                        <div class="kpi-trend">
+                            <span class="trend-up">
+                                <i class="bi bi-arrow-up"></i>
+                                Active across {{ stats.active_batches }} batches
                             </span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="dashboard-card stat-card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="stat-content">
-                                <h6 class="stat-label">Active Batches</h6>
-                                <h2 class="stat-value text-success">{{ stats.active_batches }}</h2>
-                                <p class="stat-description text-muted">Currently managed</p>
-                            </div>
-                            <div class="stat-icon-container bg-success bg-opacity-10">
-                                <i class="bi bi-check-circle-fill text-success"></i>
-                            </div>
-                        </div>
-                        <div class="stat-trend mt-3">
-                            <span class="badge bg-success bg-opacity-20 text-success">
-                                <i class="bi bi-activity me-1"></i> In progress
+            <!-- Batch Performance Card -->
+            <div class="col-xl-3 col-md-6">
+                <div class="kpi-card batch-performance">
+                    <div class="kpi-icon">
+                        <i class="bi bi-inboxes"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <h3>{{ stats.total_batches }}</h3>
+                        <p>Total Batches</p>
+                        <div class="kpi-trend">
+                            <span class="trend-neutral">
+                                <i class="bi bi-activity"></i>
+                                {{ stats.active_batches }} active
                             </span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="dashboard-card stat-card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="stat-content">
-                                <h6 class="stat-label">Total Chicks</h6>
-                                <h2 class="stat-value text-info">{{ stats.total_chicks|default:0 }}</h2>
-                                <p class="stat-description text-muted">Live inventory</p>
-                            </div>
-                            <div class="stat-icon-container bg-info bg-opacity-10">
-                                <i class="bi bi-egg-fill text-info"></i>
-                            </div>
-                        </div>
-                        <div class="stat-trend mt-3">
-                            <span class="badge bg-info bg-opacity-20 text-info">
-                                <i class="bi bi-arrow-up-short me-1"></i> Growing
+            <!-- Health Metrics Card -->
+            <div class="col-xl-3 col-md-6">
+                <div class="kpi-card health-metrics">
+                    <div class="kpi-icon">
+                        <i class="bi bi-heart-pulse"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <h3>{% if stats.mortality_rate %}{{ stats.mortality_rate }}%{% else %}N/A{% endif %}</h3>
+                        <p>Mortality Rate</p>
+                        <div class="kpi-trend">
+                            <span class="trend-{% if stats.mortality_rate and stats.mortality_rate < 5 %}down{% else %}up{% endif %}">
+                                <i class="bi bi-arrow-{% if stats.mortality_rate and stats.mortality_rate < 5 %}down{% else %}up{% endif %}"></i>
+                                {% if stats.mortality_rate %}{% if stats.mortality_rate < 5 %}Good{% else %}Needs Attention{% endif %}{% else %}No Data{% endif %}
                             </span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="dashboard-card stat-card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="stat-content">
-                                <h6 class="stat-label">Inventory Items</h6>
-                                <h2 class="stat-value text-warning">{{ stats.inventory_items }}</h2>
-                                <p class="stat-description text-muted">Supplies & equipment</p>
-                            </div>
-                            <div class="stat-icon-container bg-warning bg-opacity-10">
-                                <i class="bi bi-box-seam-fill text-warning"></i>
-                            </div>
-                        </div>
-                        <div class="stat-trend mt-3">
+            <!-- Inventory Status Card -->
+            <div class="col-xl-3 col-md-6">
+                <div class="kpi-card inventory-status">
+                    <div class="kpi-icon">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <h3>{{ stats.inventory_items }}</h3>
+                        <p>Inventory Items</p>
+                        <div class="kpi-trend">
                             {% if stats.low_stock_items > 0 %}
-                                <span class="badge bg-danger bg-opacity-20 text-danger">
-                                    <i class="bi bi-exclamation-triangle me-1"></i> {{ stats.low_stock_items }} low stock
+                                <span class="trend-warning">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    {{ stats.low_stock_items }} low stock
                                 </span>
                             {% else %}
-                                <span class="badge bg-success bg-opacity-20 text-success">
-                                    <i class="bi bi-check-lg me-1"></i> Stock good
+                                <span class="trend-up">
+                                    <i class="bi bi-check-circle"></i>
+                                    Stock levels good
                                 </span>
                             {% endif %}
                         </div>
@@ -155,164 +153,243 @@
             </div>
         </div>
 
-        <!-- Quick Actions with Enhanced Design -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="dashboard-card">
-                    <div class="card-header bg-transparent border-bottom-0 pb-0">
-                        <h4 class="card-title mb-0">
-                            <i class="bi bi-lightning-fill text-warning me-2"></i> Quick Actions
-                        </h4>
-                        <p class="text-muted mb-0">Frequently used operations</p>
+        <!-- Main Dashboard Content -->
+        <div class="row g-4">
+            <!-- Left Column -->
+            <div class="col-xl-8">
+                <!-- Recent Batches Section -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h4><i class="bi bi-layers me-2"></i>Recent Batches</h4>
+                        <a href="{% url 'products:batch_list' %}" class="btn btn-outline-primary btn-sm">
+                            View All <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
                     </div>
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-xl-3 col-md-6">
-                                <a href="{% url 'products:batch_create' %}" class="quick-action-card">
-                                    <div class="card h-100 border-0 shadow-sm hover-lift">
-                                        <div class="card-body text-center p-4">
-                                            <div class="quick-action-icon bg-primary bg-opacity-10 text-primary rounded-circle mx-auto mb-3">
-                                                <i class="bi bi-plus-lg"></i>
+                    <div class="section-content">
+                        {% if recent_batches %}
+                            <div class="batch-grid">
+                                {% for batch in recent_batches %}
+                                    <div class="batch-card">
+                                        <div class="batch-header">
+                                            <div class="batch-id">Batch #{{ batch.id }}</div>
+                                            <div class="batch-status status-{{ batch.status|lower }}">
+                                                {{ batch.get_status_display }}
                                             </div>
-                                            <h6 class="fw-semibold mb-2">New Batch</h6>
-                                            <p class="text-muted small mb-0">Start a new poultry batch</p>
+                                        </div>
+                                        <div class="batch-details">
+                                            <div class="batch-type">
+                                                <i class="bi bi-tag"></i>
+                                                {{ batch.get_breeder_type_display }}
+                                            </div>
+                                            <div class="batch-date">
+                                                <i class="bi bi-calendar"></i>
+                                                {{ batch.hatch_date|date:"M d, Y" }}
+                                            </div>
+                                            <div class="batch-count">
+                                                <i class="bi bi-people"></i>
+                                                {{ batch.current_count|default:batch.initial_count }}/{{ batch.initial_count }}
+                                            </div>
+                                            <div class="batch-age">
+                                                <i class="bi bi-clock"></i>
+                                                {{ batch.age_days }} days old
+                                            </div>
+                                        </div>
+                                        <div class="batch-actions">
+                                            <a href="{% url 'products:batch_detail' batch.pk %}" class="btn btn-primary btn-sm">
+                                                <i class="bi bi-eye me-1"></i> View Details
+                                            </a>
                                         </div>
                                     </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <i class="bi bi-inboxes"></i>
+                                </div>
+                                <h5>No Batches Yet</h5>
+                                <p>Start by creating your first poultry batch</p>
+                                <a href="{% url 'products:batch_create' %}" class="btn btn-primary">
+                                    <i class="bi bi-plus-circle me-2"></i> Create Batch
                                 </a>
                             </div>
-                            <div class="col-xl-3 col-md-6">
-                                <a href="{% url 'products:inventory_create' %}" class="quick-action-card">
-                                    <div class="card h-100 border-0 shadow-sm hover-lift">
-                                        <div class="card-body text-center p-4">
-                                            <div class="quick-action-icon bg-success bg-opacity-10 text-success rounded-circle mx-auto mb-3">
-                                                <i class="bi bi-clipboard-plus"></i>
-                                            </div>
-                                            <h6 class="fw-semibold mb-2">Add Inventory</h6>
-                                            <p class="text-muted small mb-0">Record new supplies</p>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <a href="{% url 'products:medicine_create' %}" class="quick-action-card">
-                                    <div class="card h-100 border-0 shadow-sm hover-lift">
-                                        <div class="card-body text-center p-4">
-                                            <div class="quick-action-icon bg-info bg-opacity-10 text-info rounded-circle mx-auto mb-3">
-                                                <i class="bi bi-capsule"></i>
-                                            </div>
-                                            <h6 class="fw-semibold mb-2">Add Medicine</h6>
-                                            <p class="text-muted small mb-0">Register medications</p>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <a href="{% url 'products:feed_formula_create' %}" class="quick-action-card">
-                                    <div class="card h-100 border-0 shadow-sm hover-lift">
-                                        <div class="card-body text-center p-4">
-                                            <div class="quick-action-icon bg-warning bg-opacity-10 text-warning rounded-circle mx-auto mb-3">
-                                                <i class="bi bi-basket"></i>
-                                            </div>
-                                            <h6 class="fw-semibold mb-2">Add Feed Formula</h6>
-                                            <p class="text-muted small mb-0">Create feeding plans</p>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Quick Actions Section -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h4><i class="bi bi-lightning me-2"></i>Quick Actions</h4>
+                    </div>
+                    <div class="section-content">
+                        <div class="quick-actions-grid">
+                            <a href="{% url 'products:batch_create' %}" class="quick-action">
+                                <div class="action-icon bg-primary">
+                                    <i class="bi bi-plus-lg"></i>
+                                </div>
+                                <div class="action-content">
+                                    <h6>New Batch</h6>
+                                    <p>Start new poultry batch</p>
+                                </div>
+                                <div class="action-arrow">
+                                    <i class="bi bi-arrow-right"></i>
+                                </div>
+                            </a>
+
+                            <a href="{% url 'products:inventory_create' %}" class="quick-action">
+                                <div class="action-icon bg-success">
+                                    <i class="bi bi-clipboard-plus"></i>
+                                </div>
+                                <div class="action-content">
+                                    <h6>Add Inventory</h6>
+                                    <p>Record supplies</p>
+                                </div>
+                                <div class="action-arrow">
+                                    <i class="bi bi-arrow-right"></i>
+                                </div>
+                            </a>
+
+                            <a href="{% url 'products:medicine_create' %}" class="quick-action">
+                                <div class="action-icon bg-info">
+                                    <i class="bi bi-capsule"></i>
+                                </div>
+                                <div class="action-content">
+                                    <h6>Add Medicine</h6>
+                                    <p>Register medications</p>
+                                </div>
+                                <div class="action-arrow">
+                                    <i class="bi bi-arrow-right"></i>
+                                </div>
+                            </a>
+
+                            <a href="{% url 'products:feed_formula_create' %}" class="quick-action">
+                                <div class="action-icon bg-warning">
+                                    <i class="bi bi-basket"></i>
+                                </div>
+                                <div class="action-content">
+                                    <h6>Add Feed</h6>
+                                    <p>Create feeding plans</p>
+                                </div>
+                                <div class="action-arrow">
+                                    <i class="bi bi-arrow-right"></i>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Recent Batches with Enhanced Table -->
-        <div class="row">
-            <div class="col-12">
-                <div class="dashboard-card">
-                    <div class="card-header bg-transparent border-bottom-0 d-flex justify-content-between align-items-center">
-                        <div>
-                            <h4 class="card-title mb-0">
-                                <i class="bi bi-clock-history text-primary me-2"></i> Recent Batches
-                            </h4>
-                            <p class="text-muted mb-0">Latest poultry batch activities</p>
-                        </div>
-                        <a href="{% url 'products:batch_list' %}" class="btn btn-primary">
-                            <i class="bi bi-eye me-1"></i> View All
-                        </a>
+            <!-- Right Column -->
+            <div class="col-xl-4">
+                <!-- Alerts & Notifications -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h4><i class="bi bi-bell me-2"></i>Alerts</h4>
+                        <span class="badge bg-danger">{{ alerts_count }}</span>
                     </div>
-                    <div class="card-body p-0">
-                        {% if recent_batches %}
-                            <div class="table-responsive">
-                                <table class="table table-hover align-middle mb-0">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th class="ps-4">Batch ID</th>
-                                            <th>Type</th>
-                                            <th>Hatch Date</th>
-                                            <th>Count</th>
-                                            <th>Age</th>
-                                            <th>Status</th>
-                                            <th class="text-end pe-4">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for batch in recent_batches %}
-                                            <tr class="batch-row">
-                                                <td class="ps-4 fw-semibold">#{{ batch.id }}</td>
-                                                <td>
-                                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25">
-                                                        {{ batch.get_breeder_type_display }}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <i class="bi bi-calendar3 text-muted me-2"></i>
-                                                        {{ batch.hatch_date }}
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="progress-count">
-                                                        <span class="fw-semibold">{{ batch.current_count|default:batch.initial_count }}</span>
-                                                        <span class="text-muted">/ {{ batch.initial_count }}</span>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span class="age-badge">{{ batch.age_days }} days</span>
-                                                </td>
-                                                <td>
-                                                    <span class="status-badge
-                                                        {% if batch.status == 'ACTIVE' %}status-active
-                                                        {% elif batch.status == 'SOLD' %}status-sold
-                                                        {% elif batch.status == 'DECEASED' %}status-deceased
-                                                        {% else %}status-other{% endif %}">
-                                                        <i class="bi
-                                                            {% if batch.status == 'ACTIVE' %}bi-check-circle
-                                                            {% elif batch.status == 'SOLD' %}bi-currency-dollar
-                                                            {% elif batch.status == 'DECEASED' %}bi-x-circle
-                                                            {% else %}bi-dash-circle{% endif %} me-1"></i>
-                                                        {{ batch.get_status_display }}
-                                                    </span>
-                                                </td>
-                                                <td class="text-end pe-4">
-                                                    <a href="{% url 'products:batch_detail' batch.pk %}" class="btn btn-sm btn-outline-primary">
-                                                        <i class="bi bi-eye me-1"></i> View
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
+                    <div class="section-content">
+                        {% if alerts %}
+                            <div class="alerts-list">
+                                {% for alert in alerts %}
+                                    <div class="alert-item alert-{{ alert.priority }}">
+                                        <div class="alert-icon">
+                                            <i class="bi bi-exclamation-triangle"></i>
+                                        </div>
+                                        <div class="alert-content">
+                                            <h6>{{ alert.title }}</h6>
+                                            <p>{{ alert.message }}</p>
+                                        </div>
+                                        <div class="alert-time">Now</div>
+                                    </div>
+                                {% endfor %}
                             </div>
                         {% else %}
-                            <div class="text-center py-5">
-                                <div class="empty-state-icon mb-3">
-                                    <i class="bi bi-inbox display-4 text-muted"></i>
+                            <div class="empty-state small">
+                                <div class="empty-icon text-success">
+                                    <i class="bi bi-check-circle"></i>
                                 </div>
-                                <h5 class="text-muted mb-3">No batches yet</h5>
-                                <p class="text-muted mb-4">Create your first batch to start managing your poultry operations</p>
-                                <a href="{% url 'products:batch_create' %}" class="btn btn-primary btn-lg">
-                                    <i class="bi bi-plus-circle me-2"></i> Create First Batch
-                                </a>
+                                <h6>No Active Alerts</h6>
+                                <p class="small">All systems operational</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Performance Metrics -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h4><i class="bi bi-graph-up me-2"></i>Performance</h4>
+                    </div>
+                    <div class="section-content">
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <div class="metric-label">Avg. Batch Age</div>
+                                <div class="metric-value">
+                                    {% if stats.avg_batch_age %}
+                                        {{ stats.avg_batch_age }} days
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Oldest Batch</div>
+                                <div class="metric-value">
+                                    {% if stats.oldest_active_batch %}
+                                        {{ stats.oldest_active_batch }} days
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Health Score</div>
+                                <div class="metric-value">
+                                    {% if stats.mortality_rate %}
+                                        {% if stats.mortality_rate < 3 %}
+                                            <span class="text-success">Excellent</span>
+                                        {% elif stats.mortality_rate < 7 %}
+                                            <span class="text-warning">Good</span>
+                                        {% else %}
+                                            <span class="text-danger">Poor</span>
+                                        {% endif %}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h4><i class="bi bi-clock-history me-2"></i>Recent Activity</h4>
+                    </div>
+                    <div class="section-content">
+                        {% if recent_activities %}
+                            <div class="activity-feed">
+                                {% for activity in recent_activities %}
+                                    <div class="activity-item">
+                                        <div class="activity-icon">
+                                            <i class="bi bi-{{ activity.icon }} text-{{ activity.color }}"></i>
+                                        </div>
+                                        <div class="activity-content">
+                                            <p class="mb-1">{{ activity.message }}</p>
+                                            <small class="text-muted">{{ activity.timestamp|timesince }} ago</small>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="empty-state small">
+                                <div class="empty-icon">
+                                    <i class="bi bi-activity"></i>
+                                </div>
+                                <h6>No Recent Activity</h6>
+                                <p class="small">Activity will appear here</p>
                             </div>
                         {% endif %}
                     </div>
@@ -321,24 +398,22 @@
         </div>
 
     {% else %}
-        <!-- No Company - Enhanced Design -->
-        <div class="row">
-            <div class="col-12">
-                <div class="dashboard-card">
-                    <div class="card-body text-center py-5">
-                        <div class="empty-state-icon mb-4">
-                            <i class="bi bi-building-exclamation display-1 text-warning"></i>
-                        </div>
-                        <h3 class="text-warning mb-3">No Company Association</h3>
-                        <p class="text-muted mb-4">You are not currently associated with any company. Please contact support for assistance or create a new company profile.</p>
-                        <div class="d-flex justify-content-center gap-3">
-                            <a href="#" class="btn btn-primary">
-                                <i class="bi bi-telephone me-2"></i> Contact Support
-                            </a>
-                            <a href="#" class="btn btn-outline-primary">
-                                <i class="bi bi-plus-circle me-2"></i> Create Company
-                            </a>
-                        </div>
+        <!-- No Company State -->
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="empty-company-state">
+                    <div class="empty-icon">
+                        <i class="bi bi-building-exclamation"></i>
+                    </div>
+                    <h3>No Farm Association</h3>
+                    <p>You need to be associated with a farm to access the dashboard</p>
+                    <div class="action-buttons">
+                        <a href="#" class="btn btn-primary">
+                            <i class="bi bi-telephone me-2"></i> Contact Support
+                        </a>
+                        <a href="#" class="btn btn-outline-primary">
+                            <i class="bi bi-plus-circle me-2"></i> Create Farm
+                        </a>
                     </div>
                 </div>
             </div>
@@ -348,52 +423,77 @@
 
 <style>
     /* Enhanced Dashboard Styles */
-    .company-header-card {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        border: none;
-        border-radius: 16px;
+    .farm-header-card {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(44, 85, 48, 0.2);
     }
 
-    .company-avatar {
-        width: 60px;
-        height: 60px;
+    .farm-avatar {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
     }
 
-    .role-badge {
-        font-size: 0.75rem;
-        padding: 0.35em 0.65em;
-    }
-
-    .stat-card {
-        border: none;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-2px);
-    }
-
-    .stat-label {
-        font-size: 0.875rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: #6c757d;
+    .farm-name {
+        font-size: 2rem;
+        font-weight: 700;
         margin-bottom: 0.5rem;
     }
 
-    .stat-value {
-        font-size: 2.25rem;
-        font-weight: 700;
-        margin-bottom: 0.25rem;
+    .farm-details {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
     }
 
-    .stat-description {
+    .location {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        opacity: 0.9;
+    }
+
+    .role-badge {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.35rem 1rem;
+        border-radius: 20px;
         font-size: 0.875rem;
-        margin-bottom: 0;
+        font-weight: 500;
     }
 
-    .stat-icon-container {
+    /* KPI Cards */
+    .kpi-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border-left: 4px solid;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .kpi-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .kpi-card.bird-count { border-left-color: var(--info); }
+    .kpi-card.batch-performance { border-left-color: var(--primary); }
+    .kpi-card.health-metrics { border-left-color: var(--success); }
+    .kpi-card.inventory-status { border-left-color: var(--warning); }
+
+    .kpi-icon {
         width: 60px;
         height: 60px;
         border-radius: 12px;
@@ -401,119 +501,369 @@
         align-items: center;
         justify-content: center;
         font-size: 1.5rem;
+        color: white;
     }
 
-    .stat-trend .badge {
-        font-size: 0.75rem;
-        padding: 0.35em 0.65em;
+    .kpi-card.bird-count .kpi-icon { background: var(--info); }
+    .kpi-card.batch-performance .kpi-icon { background: var(--primary); }
+    .kpi-card.health-metrics .kpi-icon { background: var(--success); }
+    .kpi-card.inventory-status .kpi-icon { background: var(--warning); }
+
+    .kpi-content h3 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+        color: var(--dark);
     }
 
-    /* Quick Actions */
-    .quick-action-card {
-        text-decoration: none;
-        color: inherit;
-        display: block;
+    .kpi-content p {
+        color: var(--text-light);
+        margin-bottom: 0.5rem;
+        font-weight: 500;
     }
 
-    .quick-action-card .card {
+    .kpi-trend .trend-up { color: var(--success); }
+    .kpi-trend .trend-down { color: var(--danger); }
+    .kpi-trend .trend-neutral { color: var(--info); }
+    .kpi-trend .trend-warning { color: var(--warning); }
+
+    /* Section Styles */
+    .section-header {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .section-header h3,
+    .section-header h4 {
+        margin: 0;
+        color: var(--dark);
+        font-weight: 600;
+    }
+
+    .section-subtitle {
+        color: var(--text-light);
+        margin-top: 0.25rem;
+    }
+
+    .dashboard-section {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1.5rem;
+    }
+
+    .section-content {
+        margin-top: 1rem;
+    }
+
+    /* Batch Grid */
+    .batch-grid {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .batch-card {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.25rem;
         transition: all 0.3s ease;
     }
 
-    .quick-action-card:hover .card {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+    .batch-card:hover {
+        border-color: var(--primary);
+        box-shadow: 0 4px 15px rgba(44, 85, 48, 0.1);
     }
 
-    .quick-action-icon {
-        width: 70px;
-        height: 70px;
+    .batch-header {
         display: flex;
+        justify-content: between;
         align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
+        margin-bottom: 1rem;
     }
 
-    /* Table Enhancements */
-    .batch-row {
-        transition: background-color 0.2s ease;
+    .batch-id {
+        font-weight: 600;
+        color: var(--dark);
     }
 
-    .batch-row:hover {
-        background-color: #f8f9fa;
-    }
-
-    .progress-count {
-        font-size: 0.9rem;
-    }
-
-    .age-badge {
-        background-color: #e7f1ff;
-        color: #0d6efd;
-        padding: 0.35em 0.65em;
-        border-radius: 6px;
-        font-size: 0.875rem;
-        font-weight: 500;
-    }
-
-    .status-badge {
-        padding: 0.5em 1em;
+    .batch-status {
+        padding: 0.35rem 1rem;
         border-radius: 20px;
         font-size: 0.875rem;
         font-weight: 500;
-        display: inline-flex;
+    }
+
+    .status-active { background: var(--success-light); color: var(--success-dark); }
+    .status-sold { background: var(--info-light); color: var(--info-dark); }
+    .status-deceased { background: var(--danger-light); color: var(--danger-dark); }
+
+    .batch-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .batch-details > div {
+        display: flex;
         align-items: center;
+        gap: 0.5rem;
+        color: var(--text-light);
+        font-size: 0.9rem;
     }
 
-    .status-active {
-        background-color: #d1e7dd;
-        color: #0f5132;
-        border: 1px solid #badbcc;
+    /* Quick Actions */
+    .quick-actions-grid {
+        display: grid;
+        gap: 1rem;
     }
 
-    .status-sold {
-        background-color: #cff4fc;
-        color: #055160;
-        border: 1px solid #b6effb;
+    .quick-action {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s ease;
     }
 
-    .status-deceased {
-        background-color: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f1aeb5;
+    .quick-action:hover {
+        border-color: var(--primary);
+        background: rgba(44, 85, 48, 0.02);
+        transform: translateX(5px);
     }
 
-    .status-other {
-        background-color: #e2e3e5;
-        color: #383d41;
-        border: 1px solid #d6d8db;
+    .action-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+    }
+
+    .action-content h6 {
+        margin: 0;
+        font-weight: 600;
+        color: var(--dark);
+    }
+
+    .action-content p {
+        margin: 0;
+        color: var(--text-light);
+        font-size: 0.875rem;
+    }
+
+    .action-arrow {
+        margin-left: auto;
+        color: var(--text-light);
+        transition: transform 0.3s ease;
+    }
+
+    .quick-action:hover .action-arrow {
+        transform: translateX(3px);
+        color: var(--primary);
+    }
+
+    /* Alerts */
+    .alerts-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .alert-item {
+        display: flex;
+        align-items: start;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 10px;
+        border-left: 4px solid;
+    }
+
+    .alert-high { border-left-color: var(--danger); background: rgba(220, 53, 69, 0.05); }
+    .alert-medium { border-left-color: var(--warning); background: rgba(255, 193, 7, 0.05); }
+
+    .alert-icon {
+        color: var(--danger);
+        font-size: 1.25rem;
+        margin-top: 0.125rem;
+    }
+
+    .alert-medium .alert-icon {
+        color: var(--warning);
+    }
+
+    .alert-content h6 {
+        margin: 0 0 0.25rem 0;
+        font-weight: 600;
+    }
+
+    .alert-content p {
+        margin: 0;
+        color: var(--text-light);
+        font-size: 0.875rem;
+    }
+
+    .alert-time {
+        color: var(--text-light);
+        font-size: 0.75rem;
+        margin-left: auto;
+    }
+
+    /* Metrics Grid */
+    .metrics-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .metric-item {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .metric-item:last-child {
+        border-bottom: none;
+    }
+
+    .metric-label {
+        color: var(--text-light);
+        font-weight: 500;
+    }
+
+    .metric-value {
+        font-weight: 600;
+        color: var(--dark);
+    }
+
+    /* Activity Feed */
+    .activity-feed {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: start;
+        gap: 1rem;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-icon {
+        font-size: 1.1rem;
+        margin-top: 0.125rem;
+    }
+
+    .activity-content p {
+        margin: 0;
+        font-size: 0.9rem;
     }
 
     /* Empty States */
-    .empty-state-icon {
-        opacity: 0.7;
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: var(--text-light);
     }
 
-    /* Responsive Adjustments */
+    .empty-state.small {
+        padding: 2rem 1rem;
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .empty-state.small .empty-icon {
+        font-size: 2.5rem;
+    }
+
+    .empty-state h5,
+    .empty-state h6 {
+        margin-bottom: 0.5rem;
+        color: var(--dark);
+    }
+
+    .empty-company-state {
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+
+    .empty-company-state .empty-icon {
+        font-size: 5rem;
+        color: var(--warning);
+        margin-bottom: 1.5rem;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    /* Responsive Design */
     @media (max-width: 768px) {
-        .company-avatar {
-            width: 50px;
-            height: 50px;
+        .farm-header-card {
+            padding: 1.5rem;
         }
 
-        .stat-value {
-            font-size: 1.75rem;
-        }
-
-        .stat-icon-container {
-            width: 50px;
-            height: 50px;
-            font-size: 1.25rem;
-        }
-
-        .quick-action-icon {
+        .farm-avatar {
             width: 60px;
             height: 60px;
+            font-size: 1.5rem;
+        }
+
+        .farm-name {
+            font-size: 1.5rem;
+        }
+
+        .kpi-card {
+            padding: 1rem;
+        }
+
+        .kpi-icon {
+            width: 50px;
+            height: 50px;
             font-size: 1.25rem;
+        }
+
+        .kpi-content h3 {
+            font-size: 1.5rem;
+        }
+
+        .batch-details {
+            grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .section-header {
+            flex-direction: column;
+            align-items: start;
+            gap: 1rem;
         }
     }
 </style>

@@ -1,144 +1,599 @@
-{% extends "base.html" %} {% load static %} {% block title %} Front | Form {% endblock title %} {% block body %}
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Tokyo Farm | Sustainable Poultry Farming {% endblock title %}
 
-<div>
-    <div class="column-lg pt-5">
-        <img class="farm1" style="width:1600px; height:720px; border-radius:10px; margin-left:30px;" src="{% static 'major/imgs/farm4.jpg' %}" alt="">
-    </div>
-</div>
-
-<div class="container-text text-primary col-lg-7 mt-5 pt-2 pb-2 px-5" style="border-radius:20px; margin-left: 300px; margin-top:20px; font-size: xx-large; font-weight: bolder; background:white;">
-    <h1>FIRST COMES THE CHICKEN, THEN THE EGG</h1>
-</div>
-
+{% block body %}
 <style>
-    .inline-container {
+    /* Hero Section */
+    .hero-section {
+        position: relative;
+        height: 85vh;
+        overflow: hidden;
+        border-radius: 0 0 20px 20px;
+        margin-bottom: 4rem;
+    }
+
+    .hero-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(0.7);
+    }
+
+    .hero-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: white;
+        width: 90%;
+        max-width: 1200px;
+    }
+
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        line-height: 1.2;
+    }
+
+    .hero-subtitle {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        font-weight: 400;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+    }
+
+    .hero-btn {
+        background-color: var(--accent);
+        color: var(--dark);
+        border: none;
+        padding: 0.8rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .hero-btn:hover {
+        background-color: var(--accent-dark);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    }
+
+    /* Content Sections */
+    .content-section {
+        padding: 5rem 0;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: var(--primary);
+        text-align: center;
+    }
+
+    .section-subtitle {
+        font-size: 1.2rem;
+        color: var(--text-light);
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto 3rem;
+        line-height: 1.6;
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        height: 100%;
+        text-align: center;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    }
+
+    .feature-icon {
+        font-size: 3rem;
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+    }
+
+    .feature-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--dark);
+    }
+
+    .feature-text {
+        color: var(--text-light);
+        line-height: 1.6;
+    }
+
+    /* Mission Section */
+    .mission-section {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: white;
+        padding: 5rem 0;
+        border-radius: 20px;
+        margin: 4rem 0;
+    }
+
+    .mission-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .mission-text {
+        font-size: 1.2rem;
+        line-height: 1.7;
+        max-width: 900px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    /* Image Content Blocks */
+    .image-content-block {
         display: flex;
         align-items: center;
-        justify-content: baseline;
-        white-space: nowrap;
-        margin-left: 50px;
-        margin-top: 20px;
+        margin-bottom: 5rem;
+        gap: 4rem;
     }
-    
-    .inline-container img {
-        width: 600px;
-        height: 500px;
-        border-radius: 30px;
-    }
-    
-    .inline-container .text-container {
-        max-width: 600px;
-        margin-left: 30px;
-    }
-    
-    .inline-container .text-container h2 {
-        font-size: 2.5rem;
-        margin-bottom: 15px;
-    }
-    
-    .inline-container .text-container span {
-        font-size: 1.5rem;
-        line-height: 1.5;
-    }
-    
-    .text1 {
-        margin: 10px 5px 10px 5px;
-    }
-    .major-heading {
-        font-size: 2.5rem;
-        font-weight: bold;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    
-    .info-container {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 30px;
-        margin-top: 20px;
-    }
-    
-    .info-block {
-        width: 22%; /* Adjust this width to fit your layout */
-        min-width: 250px; /* Ensures responsiveness */
-    }
-    
-    .info-block h1 {
-        font-size: 1.8rem;
-        font-weight: bold;
-        color: #333;
-    }
-    
-    .info-block p {
-        font-size: 1rem;
-        line-height: 1.5;
-        color: #555;
-    }
-    
 
+    .image-content-block.reverse {
+        flex-direction: row-reverse;
+    }
+
+    .image-content-block img {
+        width: 50%;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        object-fit: cover;
+        height: 500px;
+    }
+
+    .content-text {
+        width: 50%;
+    }
+
+    .content-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: var(--primary);
+    }
+
+    .content-description {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        color: var(--text);
+        margin-bottom: 1.5rem;
+    }
+
+    .content-highlight {
+        background-color: rgba(44, 85, 48, 0.1);
+        border-left: 4px solid var(--primary);
+        padding: 1.5rem;
+        border-radius: 0 8px 8px 0;
+        margin: 2rem 0;
+    }
+
+    .content-highlight h3 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--primary);
+    }
+
+    /* Values Section */
+    .values-section {
+        background-color: rgba(184, 240, 242, 0.3);
+        padding: 5rem 0;
+        border-radius: 20px;
+        margin: 4rem 0;
+    }
+
+    .values-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .value-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .value-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .value-icon {
+        font-size: 2.5rem;
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+    }
+
+    .value-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--dark);
+    }
+
+    .value-text {
+        color: var(--text-light);
+        line-height: 1.6;
+    }
+
+    /* Stats Section */
+    .stats-section {
+        padding: 5rem 0;
+        background-color: var(--light-gray);
+        border-radius: 20px;
+        margin: 4rem 0;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 2rem 1rem;
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+        line-height: 1;
+    }
+
+    .stat-label {
+        font-size: 1.1rem;
+        color: var(--text-light);
+        font-weight: 500;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: white;
+        padding: 5rem 0;
+        border-radius: 20px;
+        text-align: center;
+        margin: 4rem 0;
+    }
+
+    .cta-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    .cta-text {
+        font-size: 1.2rem;
+        margin-bottom: 2.5rem;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+    }
+
+    .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-light {
+        background-color: white;
+        color: var(--primary);
+        border: none;
+        padding: 0.8rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-light:hover {
+        background-color: var(--light-gray);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .btn-outline-light {
+        background-color: transparent;
+        color: white;
+        border: 2px solid white;
+        padding: 0.8rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-light:hover {
+        background-color: white;
+        color: var(--primary);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .hero-title {
+            font-size: 2.8rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+        }
+
+        .image-content-block {
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .image-content-block img,
+        .content-text {
+            width: 100%;
+        }
+
+        .content-title {
+            font-size: 2rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.2rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+        }
+
+        .content-title {
+            font-size: 1.8rem;
+        }
+
+        .cta-title {
+            font-size: 2rem;
+        }
+
+        .cta-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cta-buttons .btn {
+            width: 100%;
+            max-width: 300px;
+        }
+    }
 </style>
 
-<div class="inline-container">
-    <img src="{% static 'major/imgs/farm3.jpg' %}" alt="">
-    <div class="text-container">
-        <h2>Revolutionizing Farming For a Healthier Planet</h2>
-        <span class="text">We redefine the role of livestock in the food ecosystem. <br> Our chickens contribute to a better environment and prevent food waste by turning <br> surpluses of agriculture and food processing into nutritious eggs <br> and meat, as well as valuable fertilizers. <br> The carefully controlled upcycled feed contains, <br> for example, leftovers from sources such as large bakeries, and pasta factories.</span>
+<!-- Hero Section -->
+<section class="hero-section">
+    <img class="hero-image" src="{% static 'major/imgs/farm4.jpg' %}" alt="Tokyo Farm - Sustainable Poultry Farming">
+    <div class="hero-content">
+        <h1 class="hero-title">First Comes the Chicken, Then the Egg</h1>
+        <p class="hero-subtitle">Professional poultry management solutions for sustainable farming and premium quality products</p>
+        {% if not request.user.is_authenticated %}
+            <a href="{% url 'company:register' %}" class="btn hero-btn">Get Started Today</a>
+        {% else %}
+            <a href="{% url 'company:dashboard' %}" class="btn hero-btn">Go to Dashboard</a>
+        {% endif %}
     </div>
-</div>
+</section>
 
+<!-- Features Section -->
+<section class="content-section">
+    <div class="container">
+        <h2 class="section-title">Why Choose Tokyo Farm?</h2>
+        <p class="section-subtitle">Our innovative approach to poultry farming combines technology, sustainability, and animal welfare for superior results</p>
 
-<div class="inline-container">
-    <div class="text-container" style="margin-right:200px;">
-        <h2>Better for Birds, Earth and You</h2>
-        <span class="text">We’re on a mission to revolutionize food production  <br> by prioritizing ethics and sustainability, <br> ensuring a healthier planet for future generations.</span>
-    </div>
-    <img src="{% static 'major/imgs/farm2.jpg' %}" alt="">
-</div>
-
-
-<div class="inline-container">
-    <img src="{% static 'major/imgs/farm3.jpg' %}" alt="">
-    <div class="text-container">
-        <h2>More respect for animals and nature</h2>
-        <span class="text">It might sound like a ridiculous goal for a poultry farmer, or even a crazy one, <br> but we’re dedicated to creating a world with fewer animal <br> products on our shopping lists. After all, we believe that truly <br> responsible farming means moving away from using animals <br> altogether, as genuine care for them means not serving <br> them as food.</span>
-    </div>
-</div>
-
-
-<div class="container-box mx-5 mt-5 mb-5 px-5" style="border-radius:20px; background-color:rgb(184, 240, 242);">
-    <h1 class="major-heading">A role for only a few farm animals</h1>
-    <p>We believe there’s a role for only a few farm animals, and only under certain strict conditions:</p>
-
-    <div class="info-container">
-        <div class="info-block">
-            <h1>SUSTAINABLE</h1>
-            <p>Farm animals ought to be an asset to a sustainable and robust food system – not a burden</p>
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <h3 class="feature-title">Advanced Monitoring</h3>
+                    <p class="feature-text">Real-time tracking of flock health, feed consumption, and environmental conditions for optimal productivity.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h3 class="feature-title">Animal Welfare</h3>
+                    <p class="feature-text">Ethical farming practices that prioritize the health, comfort, and natural behaviors of our poultry.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-recycle"></i>
+                    </div>
+                    <h3 class="feature-title">Sustainable Practices</h3>
+                    <p class="feature-text">Upcycled feed sources and eco-friendly operations that minimize environmental impact.</p>
+                </div>
+            </div>
         </div>
-        <div class="info-block">
-            <h1>Natural behaviors</h1>
-            <p>Humans are obliged to honor the feelings and natural behaviors of farm animals by ensuring their most fulfilling lives</p>
-        </div>
-        <div class="info-block">
-            <h1>PRODUCING FOOD</h1>
-            <p>The rivalry over food resources between humans and farm animals should never occur. The focus of crop cultivation should be on producing food, not animal feed</p>
+    </div>
+</section>
+
+<!-- Mission Section -->
+<section class="mission-section">
+    <div class="container">
+        <h2 class="mission-title">Revolutionizing Farming For a Healthier Planet</h2>
+        <p class="mission-text">
+            We redefine the role of livestock in the food ecosystem. Our chickens contribute to a better environment and prevent food waste by turning surpluses of agriculture and food processing into nutritious eggs and meat, as well as valuable fertilizers. The carefully controlled upcycled feed contains, for example, leftovers from sources such as large bakeries, and pasta factories.
+        </p>
+    </div>
+</section>
+
+<!-- Content Block 1 -->
+<section class="container">
+    <div class="image-content-block">
+        <img src="{% static 'major/imgs/farm3.jpg' %}" alt="Sustainable Poultry Farming">
+        <div class="content-text">
+            <h2 class="content-title">Better for Birds, Earth and You</h2>
+            <p class="content-description">
+                We're on a mission to revolutionize food production by prioritizing ethics and sustainability, ensuring a healthier planet for future generations.
+            </p>
+            <div class="content-highlight">
+                <h3>Our Commitment</h3>
+                <p>Every decision we make is guided by our commitment to animal welfare, environmental stewardship, and producing the highest quality poultry products.</p>
+            </div>
         </div>
     </div>
-</div>
+</section>
 
-
-
-<div class="inline-container">
-    <img style="width:600px; height:800px;" src="{% static 'major/imgs/farm6.png' %}" alt="">
-    <div class="text-container">
-        <h2>Fact</h2>
-        <span class="text">Currently, over 75% of all agricultural land is used to grow livestock <br> feed crops or for grazing.</span>
-        <h2>AGRICULTURAL LAND USE</h2>
-        <span class="text">To produce meat, milk and eggs, we need an incredible amount <br> of wheat, corn and soy. If people just ate these <br> crops directly, our needs would be <br> much less – and the planet would thank us. <br> However, people still like to eat animals products. <br> Therefore, we try to be good to our chickens and <br> the environment, without making our eggs too expensive for <br> the average person. This view creates dilemmas and tough choises <br> that we have to make.</span>
-        
-    
+<!-- Content Block 2 -->
+<section class="container">
+    <div class="image-content-block reverse">
+        <img src="{% static 'major/imgs/farm2.jpg' %}" alt="Animal Welfare">
+        <div class="content-text">
+            <h2 class="content-title">More Respect for Animals and Nature</h2>
+            <p class="content-description">
+                It might sound like a paradoxical goal for a poultry farmer, but we're dedicated to creating a world with fewer animal products on our shopping lists. After all, we believe that truly responsible farming means moving away from using animals altogether, as genuine care for them means not serving them as food.
+            </p>
+            <p class="content-description">
+                Our approach focuses on providing the best possible life for our chickens while they're with us, ensuring they experience natural behaviors and excellent care.
+            </p>
+        </div>
     </div>
-</div>
+</section>
 
+<!-- Values Section -->
+<section class="values-section">
+    <div class="container">
+        <h2 class="section-title">A Role for Only a Few Farm Animals</h2>
+        <p class="section-subtitle">We believe there's a role for only a few farm animals, and only under certain strict conditions:</p>
+
+        <div class="values-grid">
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="bi bi-tree"></i>
+                </div>
+                <h3 class="value-title">SUSTAINABLE</h3>
+                <p class="value-text">Farm animals ought to be an asset to a sustainable and robust food system – not a burden.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="bi bi-heart"></i>
+                </div>
+                <h3 class="value-title">Natural Behaviors</h3>
+                <p class="value-text">Humans are obliged to honor the feelings and natural behaviors of farm animals by ensuring their most fulfilling lives.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="bi bi-basket"></i>
+                </div>
+                <h3 class="value-title">PRODUCING FOOD</h3>
+                <p class="value-text">The rivalry over food resources between humans and farm animals should never occur. The focus of crop cultivation should be on producing food, not animal feed.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <h2 class="section-title">Our Impact in Numbers</h2>
+        <p class="section-subtitle">Measuring our progress toward a more sustainable and ethical poultry farming system</p>
+
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">75%</div>
+                <div class="stat-label">Reduced Feed Waste</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">96.5%</div>
+                <div class="stat-label">Animal Health Rate</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">12K+</div>
+                <div class="stat-label">Chickens Cared For</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">40%</div>
+                <div class="stat-label">Lower Carbon Footprint</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Content Block 3 -->
+<section class="container">
+    <div class="image-content-block">
+        <img style="height: 600px;" src="{% static 'major/imgs/farm6.png' %}" alt="Agricultural Land Use">
+        <div class="content-text">
+            <h2 class="content-title">The Challenge of Agricultural Land Use</h2>
+            <p class="content-description">
+                Currently, over 75% of all agricultural land is used to grow livestock feed crops or for grazing. To produce meat, milk and eggs, we need an incredible amount of wheat, corn and soy.
+            </p>
+            <p class="content-description">
+                If people just ate these crops directly, our needs would be much less – and the planet would thank us. However, people still like to eat animal products. Therefore, we try to be good to our chickens and the environment, without making our eggs too expensive for the average person. This view creates dilemmas and tough choices that we have to make.
+            </p>
+            <div class="content-highlight">
+                <h3>Our Solution</h3>
+                <p>By using upcycled feed sources and implementing efficient farming practices, we're reducing the land footprint of poultry farming while maintaining product quality and affordability.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <h2 class="cta-title">Ready to Transform Your Poultry Management?</h2>
+        <p class="cta-text">Join Tokyo Farm today and experience the future of sustainable, efficient, and ethical poultry farming with our comprehensive management platform.</p>
+        <div class="cta-buttons">
+            {% if not request.user.is_authenticated %}
+                <a href="{% url 'company:register' %}" class="btn btn-light">Start Your Free Trial</a>
+                <a href="{% url 'company:login' %}" class="btn btn-outline-light">Login to Existing Account</a>
+            {% else %}
+                <a href="{% url 'company:dashboard' %}" class="btn btn-light">Go to Dashboard</a>
+                <a href="{% url 'products:batch_list' %}" class="btn btn-outline-light">Manage Batches</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
 
 {% endblock body %}
