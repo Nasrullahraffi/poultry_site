@@ -5,13 +5,11 @@ from products.views import (
     FeedScheduleCreateView, MedicineListView, MedicineCreateView,
     TreatmentCreateView, DiseaseCatalogListView, DiseaseCatalogCreateView,
     DiseaseCaseCreateView, InventoryListView, InventoryCreateView,
-    StockMovementCreateView, VendorListView, VendorCreateView,
-    PurchaseOrderListView, PurchaseOrderCreateView, RFIDTagListView, RFIDTagCreateView,
+    PurchaseOrderListView, PurchaseOrderCreateView,
     BatchUpdateView, BatchDeleteView, FeedFormulaUpdateView, FeedFormulaDeleteView,
     MedicineUpdateView, MedicineDeleteView, DiseaseCatalogUpdateView, DiseaseCatalogDeleteView,
-    InventoryUpdateView, InventoryDeleteView, VendorUpdateView, VendorDeleteView,
-    RFIDTagUpdateView, RFIDTagDeleteView, PurchaseOrderDetailView, PurchaseOrderUpdateView,
-    PurchaseOrderDeleteView, StockMovementListView
+    InventoryUpdateView, InventoryDeleteView, PurchaseOrderDetailView, PurchaseOrderUpdateView,
+    PurchaseOrderDeleteView
 )
 
 app_name = 'products'
@@ -51,24 +49,11 @@ urlpatterns = [
     path('inventory/new/', InventoryCreateView.as_view(), name='inventory_create'),
     path('inventory/<int:pk>/edit/', InventoryUpdateView.as_view(), name='inventory_update'),
     path('inventory/<int:pk>/delete/', InventoryDeleteView.as_view(), name='inventory_delete'),
-    path('inventory/movement/new/', StockMovementCreateView.as_view(), name='stock_movement_add'),
-    path('inventory/movement/', StockMovementListView.as_view(), name='stock_movement_list'),
 
-    # Vendors & Purchase Orders
-    path('vendors/', VendorListView.as_view(), name='vendor_list'),
-    path('vendors/new/', VendorCreateView.as_view(), name='vendor_create'),
-    path('vendors/<int:pk>/edit/', VendorUpdateView.as_view(), name='vendor_update'),
-    path('vendors/<int:pk>/delete/', VendorDeleteView.as_view(), name='vendor_delete'),
-
+    # Purchase Orders
     path('purchase-orders/', PurchaseOrderListView.as_view(), name='purchase_order_list'),
     path('purchase-orders/new/', PurchaseOrderCreateView.as_view(), name='purchase_order_create'),
     path('purchase-orders/<int:pk>/', PurchaseOrderDetailView.as_view(), name='purchase_order_detail'),
     path('purchase-orders/<int:pk>/edit/', PurchaseOrderUpdateView.as_view(), name='purchase_order_update'),
     path('purchase-orders/<int:pk>/delete/', PurchaseOrderDeleteView.as_view(), name='purchase_order_delete'),
-
-    # RFID
-    path('rfid/', RFIDTagListView.as_view(), name='rfid_tag_list'),
-    path('rfid/new/', RFIDTagCreateView.as_view(), name='rfid_tag_create'),
-    path('rfid/<int:pk>/edit/', RFIDTagUpdateView.as_view(), name='rfid_tag_update'),
-    path('rfid/<int:pk>/delete/', RFIDTagDeleteView.as_view(), name='rfid_tag_delete'),
 ]

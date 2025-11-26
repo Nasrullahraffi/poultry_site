@@ -1,18 +1,20 @@
 from django.shortcuts import render
-from major.forms import * 
+from django.views.generic import TemplateView, FormView
+from major.forms import *
 from django.contrib import messages
-# Create your views here.
 
-def BreederView(request):
-    if request.method == "POST":
-        breeder_form = Breeder_Form(request.POST)
-        if breeder_form.is_valid():
-            breeder_form.save()
+# Class-based views
+class BreederCreateView(FormView):
+    template_name = 'home_page.html'
+    form_class = Breeder_Form
 
-    else :
-        breeder_form = Breeder_Form()
-    return render(request, 'home_page.html', {'form': breeder_form})
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, 'Breeder saved successfully.')
+        return render(self.request, self.template_name, {'form': self.form_class()})
 
+    def form_invalid(self, form):
+        return render(self.request, self.template_name, {'form': form})
 
-def front(request):
-    return render(request, "frontpage.html")
+class HomeView(TemplateView):
+    template_name = 'frontpage.html'

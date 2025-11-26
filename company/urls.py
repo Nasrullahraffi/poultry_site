@@ -6,8 +6,8 @@ from company.forms import *
 app_name = 'company'
 
 urlpatterns = [
-    path("sign", views.companyView, name="company"),
+    path("sign", views.CompanyCreateView.as_view(), name="company"),
     path('accounts/login', auth_view.LoginView.as_view(template_name='company/login.html', authentication_form=Login_Form), name='login'),
     path('registration/', views.CompanyRegView.as_view(), name='CompanyReg'),
-    path('logout', views.logout_view, name='logout'),
+    path('logout', views.CustomLogoutView.as_view(), name='logout'),
 ]

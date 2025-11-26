@@ -1,2 +1,1 @@
-{% extends 'base.html' %}{% block content %}<h2>Delete RFID Tag {{ object.tag_uid }}</h2><p>Are you sure?</p><form method="post">{% csrf_token %}<button class="btn btn-danger">Confirm Delete</button> <a href="{% url 'products:rfid_tag_list' %}" class="btn btn-secondary">Cancel</a></form>{% endblock %}
 

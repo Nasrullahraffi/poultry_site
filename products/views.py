@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, get_object_or_404, render
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.contrib import messages
 from django.db import transaction
 from django.views import View
@@ -11,14 +11,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from products.models import (
     ChickBatch, HealthCheck, FeedFormula, FeedSchedule,
     MedicineProduct, TreatmentRecord, DiseaseCatalog, DiseaseCase,
-    InventoryProduct, StockMovement, Vendor, PurchaseOrder, PurchaseOrderItem,
-    RFIDTag
+    InventoryProduct, PurchaseOrder
 )
 from products.forms import (
     ChickBatchForm, HealthCheckForm, FeedFormulaForm, FeedScheduleForm,
     MedicineProductForm, TreatmentRecordForm, DiseaseCatalogForm, DiseaseCaseForm,
-    InventoryProductForm, StockMovementForm, VendorForm, PurchaseOrderForm,
-    PurchaseOrderItemFormSet, RFIDTagForm
+    InventoryProductForm, PurchaseOrderForm
 )
 
 # ---------------------------------------------------------------------------
@@ -38,7 +36,7 @@ class BatchCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         obj = form.save()
         messages.success(self.request, 'Batch created.')
-        return redirect('batch_detail', pk=obj.pk)
+        return redirect('products:batch_detail', pk=obj.pk)
 
 class BatchDetailView(LoginRequiredMixin, DetailView):
     model = ChickBatch
@@ -72,7 +70,7 @@ class HealthCheckCreateView(LoginRequiredMixin, CreateView):
         hc.batch = self.batch
         hc.save()
         messages.success(self.request, 'Health check logged.')
-        return redirect('batch_detail', pk=self.batch.pk)
+        return redirect('products:batch_detail', pk=self.batch.pk)
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -91,7 +89,7 @@ class FeedFormulaCreateView(LoginRequiredMixin, CreateView):
     model = FeedFormula
     form_class = FeedFormulaForm
     template_name = 'products/feed_formula_form.html'
-    success_url = reverse_lazy('feed_formula_list')
+    success_url = reverse_lazy('products:feed_formula_list')
 
     def form_valid(self, form):
         messages.success(self.request, 'Feed formula created.')
@@ -111,7 +109,7 @@ class FeedScheduleCreateView(LoginRequiredMixin, CreateView):
         fs.batch = self.batch
         fs.save()
         messages.success(self.request, 'Feed schedule added.')
-        return redirect('batch_detail', pk=self.batch.pk)
+        return redirect('products:batch_detail', pk=self.batch.pk)
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -130,7 +128,7 @@ class MedicineCreateView(LoginRequiredMixin, CreateView):
     model = MedicineProduct
     form_class = MedicineProductForm
     template_name = 'products/medicine_form.html'
-    success_url = reverse_lazy('medicine_list')
+    success_url = reverse_lazy('products:medicine_list')
 
     def form_valid(self, form):
         messages.success(self.request, 'Medicine added.')
@@ -150,7 +148,7 @@ class TreatmentCreateView(LoginRequiredMixin, CreateView):
         tr.batch = self.batch
         tr.save()
         messages.success(self.request, 'Treatment recorded.')
-        return redirect('batch_detail', pk=self.batch.pk)
+        return redirect('products:batch_detail', pk=self.batch.pk)
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -169,7 +167,7 @@ class DiseaseCatalogCreateView(LoginRequiredMixin, CreateView):
     model = DiseaseCatalog
     form_class = DiseaseCatalogForm
     template_name = 'products/disease_catalog_form.html'
-    success_url = reverse_lazy('disease_catalog_list')
+    success_url = reverse_lazy('products:disease_catalog_list')
 
     def form_valid(self, form):
         messages.success(self.request, 'Disease catalog entry added.')
@@ -189,7 +187,7 @@ class DiseaseCaseCreateView(LoginRequiredMixin, CreateView):
         dc.batch = self.batch
         dc.save()
         messages.success(self.request, 'Disease case logged.')
-        return redirect('batch_detail', pk=self.batch.pk)
+        return redirect('products:batch_detail', pk=self.batch.pk)
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -197,7 +195,7 @@ class DiseaseCaseCreateView(LoginRequiredMixin, CreateView):
         return ctx
 
 # ---------------------------------------------------------------------------
-# Inventory list/create & stock movement create
+# Inventory list/create
 # ---------------------------------------------------------------------------
 class InventoryListView(LoginRequiredMixin, ListView):
     model = InventoryProduct
@@ -208,43 +206,10 @@ class InventoryCreateView(LoginRequiredMixin, CreateView):
     model = InventoryProduct
     form_class = InventoryProductForm
     template_name = 'products/inventory_form.html'
-    success_url = reverse_lazy('inventory_list')
+    success_url = reverse_lazy('products:inventory_list')
 
     def form_valid(self, form):
         messages.success(self.request, 'Inventory product created.')
-        return super().form_valid(form)
-
-class StockMovementCreateView(LoginRequiredMixin, CreateView):
-    model = StockMovement
-    form_class = StockMovementForm
-    template_name = 'products/stock_movement_form.html'
-    success_url = reverse_lazy('inventory_list')
-
-    def form_valid(self, form):
-        sm = form.save()
-        sm.apply()
-        messages.success(self.request, 'Stock movement applied.')
-        return redirect('inventory_list')
-
-# ---------------------------------------------------------------------------
-# Vendor list/create
-# ---------------------------------------------------------------------------
-class VendorListView(LoginRequiredMixin, ListView):
-    model = Vendor
-    template_name = 'products/vendor_list.html'
-    context_object_name = 'vendors'
-
-    def get_queryset(self):
-        return Vendor.objects.filter(is_active=True)
-
-class VendorCreateView(LoginRequiredMixin, CreateView):
-    model = Vendor
-    form_class = VendorForm
-    template_name = 'products/vendor_form.html'
-    success_url = reverse_lazy('vendor_list')
-
-    def form_valid(self, form):
-        messages.success(self.request, 'Vendor added.')
         return super().form_valid(form)
 
 # ---------------------------------------------------------------------------
@@ -277,26 +242,8 @@ class PurchaseOrderCreateView(LoginRequiredMixin, View):
             for obj in formset.deleted_objects:
                 obj.delete()
             messages.success(request, 'Purchase order created.')
-            return redirect('purchase_order_list')
+            return redirect('products:purchase_order_list')
         return render(request, self.template_name, {'form': form, 'formset': formset})
-
-# ---------------------------------------------------------------------------
-# RFID Tags list/create
-# ---------------------------------------------------------------------------
-class RFIDTagListView(LoginRequiredMixin, ListView):
-    model = RFIDTag
-    template_name = 'products/rfid_list.html'
-    context_object_name = 'tags'
-
-class RFIDTagCreateView(LoginRequiredMixin, CreateView):
-    model = RFIDTag
-    form_class = RFIDTagForm
-    template_name = 'products/rfid_form.html'
-    success_url = reverse_lazy('rfid_tag_list')
-
-    def form_valid(self, form):
-        messages.success(self.request, 'RFID tag added.')
-        return super().form_valid(form)
 
 # ---------------------------------------------------------------------------
 # Additional CRUD: Update / Delete Views
@@ -396,44 +343,6 @@ class InventoryDeleteView(LoginRequiredMixin, DeleteView):
         messages.success(self.request, 'Inventory product deleted.')
         return super().delete(request, *args, **kwargs)
 
-class VendorUpdateView(LoginRequiredMixin, UpdateView):
-    model = Vendor
-    form_class = VendorForm
-    template_name = 'products/vendor_form.html'
-    success_url = reverse_lazy('products:vendor_list')
-
-    def form_valid(self, form):
-        messages.success(self.request, 'Vendor updated.')
-        return super().form_valid(form)
-
-class VendorDeleteView(LoginRequiredMixin, DeleteView):
-    model = Vendor
-    template_name = 'products/vendor_confirm_delete.html'
-    success_url = reverse_lazy('products:vendor_list')
-
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, 'Vendor deleted.')
-        return super().delete(request, *args, **kwargs)
-
-class RFIDTagUpdateView(LoginRequiredMixin, UpdateView):
-    model = RFIDTag
-    form_class = RFIDTagForm
-    template_name = 'products/rfid_form.html'
-    success_url = reverse_lazy('products:rfid_tag_list')
-
-    def form_valid(self, form):
-        messages.success(self.request, 'RFID tag updated.')
-        return super().form_valid(form)
-
-class RFIDTagDeleteView(LoginRequiredMixin, DeleteView):
-    model = RFIDTag
-    template_name = 'products/rfid_confirm_delete.html'
-    success_url = reverse_lazy('products:rfid_tag_list')
-
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, 'RFID tag deleted.')
-        return super().delete(request, *args, **kwargs)
-
 class PurchaseOrderDetailView(LoginRequiredMixin, DetailView):
     model = PurchaseOrder
     template_name = 'products/purchase_order_detail.html'
@@ -480,9 +389,3 @@ class PurchaseOrderDeleteView(LoginRequiredMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Purchase order deleted.')
         return super().delete(request, *args, **kwargs)
-
-class StockMovementListView(LoginRequiredMixin, ListView):
-    model = StockMovement
-    template_name = 'products/stock_movement_list.html'
-    context_object_name = 'movements'
-    queryset = StockMovement.objects.select_related('product', 'related_batch', 'performed_by').order_by('-created_at')[:200]
