@@ -1,23 +1,69 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Login{% endblock title %}
+
+{% block title %}Login - Tokyo Farm{% endblock title %}
+
 {% block body %}
-<div class="container">
- <div class="row my-3">
-  <div class="col-sm-6 offset-sm-3 text-white mt-5" style="background-color:rgb(105, 43, 23); border-radius:30px;"> 
-   <form action="" method="post" novalidate class="shadow p-5">
-        {% csrf_token %}
-        {% for fm in form %}
-          <div class="form-group">
-            {{fm.label_tag}} {{fm}} <small class='text-danger' >{{fm.errors | striptags }}</small> <br>
-          </div>
-        {% endfor %}
-    <small><a href="#">Forgot Password</a></small> <br>
-    <input type="submit" class="btn btn-primary mt-4" value="Login">
-    <br>
-    <div class="text-center text-primary fw-bold"><small>New Taru ? <a href="{% url 'company:CompanyReg' %}" class="text-danger">Create an Account</a> </small></div>
-   </form>
-  </div>
- </div>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Welcome Back</h3>
+                    <p class="mb-0 small">Login to your account</p>
+                </div>
+                <div class="card-body p-4">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="{{ form.username.id_for_label }}" class="form-label">Username or Email</label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="text-danger small">{{ form.username.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
+                            {{ form.password }}
+                            {% if form.password.errors %}
+                                <div class="text-danger small">{{ form.password.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">Remember me</label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Login</button>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <p class="mb-0">Don't have an account? <a href="{% url 'company:register' %}">Register here</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock body %}
+

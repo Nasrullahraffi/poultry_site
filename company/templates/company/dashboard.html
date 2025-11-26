@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Company Dashboard - Tokyo Farm{% endblock title %}
+
+{% block body %}
+<div class="container-fluid mt-4">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if company %}
+        <!-- Company Header -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 class="mb-1">{{ company.name }}</h2>
+                                <p class="text-muted mb-0">
+                                    <i class="bi bi-geo-alt"></i> {{ company.city }}, {{ company.state_province }}
+                                    {% if membership %}
+                                        <span class="badge bg-primary ms-2">{{ membership.get_role_display }}</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div>
+                                <a href="{% url 'company:profile' %}" class="btn btn-outline-primary">
+                                    <i class="bi bi-gear"></i> Company Settings
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card shadow-sm border-start border-primary border-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-1">Total Batches</h6>
+                                <h3 class="mb-0">{{ stats.total_batches }}</h3>
+                            </div>
+                            <div class="text-primary fs-1">
+                                <i class="bi bi-inbox-fill"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm border-start border-success border-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-1">Active Batches</h6>
+                                <h3 class="mb-0">{{ stats.active_batches }}</h3>
+                            </div>
+                            <div class="text-success fs-1">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm border-start border-info border-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-1">Total Chicks</h6>
+                                <h3 class="mb-0">{{ stats.total_chicks|default:0 }}</h3>
+                            </div>
+                            <div class="text-info fs-1">
+                                <i class="bi bi-egg-fill"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card shadow-sm border-start border-warning border-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-1">Inventory Items</h6>
+                                <h3 class="mb-0">{{ stats.inventory_items }}</h3>
+                                {% if stats.low_stock_items > 0 %}
+                                    <span class="badge bg-warning text-dark">{{ stats.low_stock_items }} Low Stock</span>
+                                {% endif %}
+                            </div>
+                            <div class="text-warning fs-1">
+                                <i class="bi bi-box-fill"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-2">
+                                <a href="{% url 'products:batch_create' %}" class="btn btn-outline-primary w-100">
+                                    <i class="bi bi-plus-circle"></i> New Batch
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="{% url 'products:inventory_create' %}" class="btn btn-outline-success w-100">
+                                    <i class="bi bi-plus-circle"></i> Add Inventory
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="{% url 'products:medicine_create' %}" class="btn btn-outline-info w-100">
+                                    <i class="bi bi-plus-circle"></i> Add Medicine
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="{% url 'products:feed_formula_create' %}" class="btn btn-outline-warning w-100">
+                                    <i class="bi bi-plus-circle"></i> Add Feed Formula
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Batches -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Recent Batches</h5>
+                        <a href="{% url 'products:batch_list' %}" class="btn btn-sm btn-primary">View All</a>
+                    </div>
+                    <div class="card-body">
+                        {% if recent_batches %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Type</th>
+                                            <th>Hatch Date</th>
+                                            <th>Count</th>
+                                            <th>Age (Days)</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for batch in recent_batches %}
+                                            <tr>
+                                                <td>#{{ batch.id }}</td>
+                                                <td><span class="badge bg-secondary">{{ batch.get_breeder_type_display }}</span></td>
+                                                <td>{{ batch.hatch_date }}</td>
+                                                <td>{{ batch.current_count|default:batch.initial_count }} / {{ batch.initial_count }}</td>
+                                                <td>{{ batch.age_days }}</td>
+                                                <td>
+                                                    <span class="badge
+                                                        {% if batch.status == 'ACTIVE' %}bg-success
+                                                        {% elif batch.status == 'SOLD' %}bg-info
+                                                        {% elif batch.status == 'DECEASED' %}bg-danger
+                                                        {% else %}bg-secondary{% endif %}">
+                                                        {{ batch.get_status_display }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <a href="{% url 'products:batch_detail' batch.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="bi bi-inbox fs-1 text-muted"></i>
+                                <p class="text-muted mt-2">No batches yet. Create your first batch to get started!</p>
+                                <a href="{% url 'products:batch_create' %}" class="btn btn-primary">Create First Batch</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        <!-- No Company -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-warning">
+                    <h4 class="alert-heading">No Company Association</h4>
+                    <p>You are not currently associated with any company. Please contact support for assistance.</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock body %}
+
