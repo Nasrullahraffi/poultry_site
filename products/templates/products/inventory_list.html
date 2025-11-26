@@ -1,2 +1,99 @@
-{% extends 'base.html' %}{% block content %}<h1>Inventory</h1><a href="{% url 'products:inventory_create' %}" class="btn btn-primary btn-sm">New</a><table class="table table-sm mt-2"><thead><tr><th>SKU</th><th>Name</th><th>Category</th><th>Stock</th><th>Reorder</th><th>Actions</th></tr></thead><tbody>{% for p in products %}<tr><td>{{ p.sku }}</td><td>{{ p.name }}</td><td>{{ p.get_category_display }}</td><td>{{ p.stock_on_hand }}</td><td>{% if p.needs_reorder %}<span class="text-danger">Yes{% else %}No{% endif %}</span></td><td><a href="{% url 'products:inventory_update' p.id %}" class="btn btn-sm btn-outline-secondary">Edit</a> <a href="{% url 'products:inventory_delete' p.id %}" class="btn btn-sm btn-outline-danger">Delete</a></td></tr>{% empty %}<tr><td colspan="6">No products</td></tr>{% endfor %}</tbody></table><a href="{% url 'products:stock_movement_add' %}" class="btn btn-outline-secondary btn-sm">New Movement</a> <a href="{% url 'products:stock_movement_list' %}" class="btn btn-outline-secondary btn-sm">Recent Movements</a>{% endblock %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inventory Management - Poultry Management{% endblock title %}
+
+{% block body %}
+<div class="container-fluid mt-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-1"><i class="bi bi-box-seam me-2 text-primary"></i>Inventory Management</h1>
+                    <p class="text-muted mb-0">Track supplies, equipment, and stock levels</p>
+                </div>
+                <a href="{% url 'products:inventory_create' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>New Item
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card dashboard-card">
+                <div class="card-body p-0">
+                    {% if products %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">SKU</th>
+                                        <th>Name</th>
+                                        <th>Category</th>
+                                        <th>Stock on Hand</th>
+                                        <th>Reorder Level</th>
+                                        <th>Status</th>
+                                        <th class="text-end pe-4">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for p in products %}
+                                        <tr>
+                                            <td class="ps-4 fw-semibold">{{ p.sku|default:"—" }}</td>
+                                            <td>{{ p.name }}</td>
+                                            <td>
+                                                <span class="badge bg-secondary bg-opacity-10 text-secondary border">
+                                                    {{ p.get_category_display|default:"General" }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="fw-semibold">{{ p.stock_on_hand|default:0 }}</span>
+                                                {% if p.unit %}<span class="text-muted"> {{ p.unit }}</span>{% endif %}
+                                            </td>
+                                            <td>{{ p.reorder_level|default:"—" }}</td>
+                                            <td>
+                                                {% if p.needs_reorder %}
+                                                    <span class="badge bg-danger">
+                                                        <i class="bi bi-exclamation-triangle me-1"></i>Low Stock
+                                                    </span>
+                                                {% else %}
+                                                    <span class="badge bg-success">
+                                                        <i class="bi bi-check-circle me-1"></i>In Stock
+                                                    </span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-end pe-4">
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="{% url 'products:inventory_update' p.pk %}" class="btn btn-outline-secondary" title="Edit">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <a href="{% url 'products:inventory_delete' p.pk %}" class="btn btn-outline-danger" title="Delete">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="bi bi-box display-4 text-muted d-block mb-3"></i>
+                            <h5 class="text-muted mb-3">No inventory items found</h5>
+                            <p class="text-muted mb-4">Add items to track your supplies and equipment</p>
+                            <a href="{% url 'products:inventory_create' %}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle me-2"></i>Add First Item
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}
 

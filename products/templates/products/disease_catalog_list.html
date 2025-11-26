@@ -1,2 +1,89 @@
-{% extends 'base.html' %}{% block content %}<h1>Disease Catalog</h1><a href="{% url 'products:disease_catalog_create' %}" class="btn btn-primary btn-sm">New</a><table class="table table-sm mt-3"><thead><tr><th>Name</th><th>Severity</th><th>Type</th><th>Actions</th></tr></thead><tbody>{% for d in diseases %}<tr><td>{{ d.name }}</td><td>{{ d.severity }}</td><td>{{ d.get_breeder_type_display|default:'-' }}</td><td><a href="{% url 'products:disease_catalog_update' d.id %}" class="btn btn-sm btn-outline-secondary">Edit</a> <a href="{% url 'products:disease_catalog_delete' d.id %}" class="btn btn-sm btn-outline-danger">Delete</a></td></tr>{% empty %}<tr><td colspan="4">None</td></tr>{% endfor %}</tbody></table>{% endblock %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Disease Catalog - Poultry Management{% endblock title %}
+
+{% block body %}
+<div class="container-fluid mt-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-1"><i class="bi bi-shield-exclamation me-2 text-primary"></i>Disease Catalog</h1>
+                    <p class="text-muted mb-0">Manage disease database for poultry health monitoring</p>
+                </div>
+                <a href="{% url 'products:disease_catalog_create' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>New Disease
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Disease Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card dashboard-card">
+                <div class="card-body p-0">
+                    {% if diseases %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">Name</th>
+                                        <th>Severity</th>
+                                        <th>Type</th>
+                                        <th>Symptoms</th>
+                                        <th class="text-end pe-4">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for d in diseases %}
+                                        <tr>
+                                            <td class="ps-4 fw-semibold">{{ d.name }}</td>
+                                            <td>
+                                                <span class="badge
+                                                    {% if d.severity == 'HIGH' or d.severity == 'CRITICAL' %}bg-danger
+                                                    {% elif d.severity == 'MEDIUM' %}bg-warning
+                                                    {% else %}bg-info{% endif %}">
+                                                    {{ d.severity|default:"N/A" }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary bg-opacity-10 text-secondary border">
+                                                    {{ d.get_breeder_type_display|default:"General" }}
+                                                </span>
+                                            </td>
+                                            <td>{{ d.symptoms|default:"—"|truncatewords:10 }}</td>
+                                            <td class="text-end pe-4">
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="{% url 'products:disease_catalog_update' d.pk %}" class="btn btn-outline-secondary" title="Edit">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <a href="{% url 'products:disease_catalog_delete' d.pk %}" class="btn btn-outline-danger" title="Delete">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="bi bi-shield-check display-4 text-muted d-block mb-3"></i>
+                            <h5 class="text-muted mb-3">No diseases in catalog</h5>
+                            <p class="text-muted mb-4">Add diseases to build your reference database</p>
+                            <a href="{% url 'products:disease_catalog_create' %}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle me-2"></i>Add First Disease
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}
 

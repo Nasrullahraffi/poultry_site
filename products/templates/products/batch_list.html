@@ -1,23 +1,100 @@
 {% extends 'base.html' %}
-{% block content %}
-<h1>Chick Batches</h1>
-<a href="{% url 'products:batch_create' %}" class="btn btn-sm btn-primary">New Batch</a>
-<table class="table table-sm mt-3">
-<thead><tr><th>ID</th><th>Type</th><th>Hatch Date</th><th>Initial Count</th><th>Age (days)</th><th>Actions</th></tr></thead>
-<tbody>
-{% for b in batches %}
-<tr>
-  <td><a href="{% url 'products:batch_detail' b.id %}">{{ b.id }}</a></td>
-  <td>{{ b.get_breeder_type_display }}</td>
-  <td>{{ b.hatch_date }}</td>
-  <td>{{ b.initial_count }}</td>
-  <td>{{ b.age_days }}</td>
-  <td>
-    <a href="{% url 'products:batch_update' b.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
-    <a href="{% url 'products:batch_delete' b.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
-  </td>
-</tr>
-{% empty %}<tr><td colspan="6">No batches.</td></tr>{% endfor %}
-</tbody>
-</table>
-{% endblock %}
+{% load static %}
+
+{% block title %}Chick Batches - Poultry Management{% endblock title %}
+
+{% block body %}
+<div class="container-fluid mt-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-1"><i class="bi bi-layers me-2 text-primary"></i>Chick Batches</h1>
+                    <p class="text-muted mb-0">Manage all poultry batches and track their progress</p>
+                </div>
+                <a href="{% url 'products:batch_create' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>New Batch
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Batches Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card dashboard-card">
+                <div class="card-body p-0">
+                    {% if batches %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">Batch ID</th>
+                                        <th>Type</th>
+                                        <th>Hatch Date</th>
+                                        <th>Count</th>
+                                        <th>Age</th>
+                                        <th>Status</th>
+                                        <th class="text-end pe-4">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for b in batches %}
+                                        <tr>
+                                            <td class="ps-4 fw-semibold">
+                                                <a href="{% url 'products:batch_detail' b.pk %}" class="text-decoration-none">#{{ b.id }}</a>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary bg-opacity-10 text-secondary border">
+                                                    {{ b.get_breeder_type_display }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <i class="bi bi-calendar3 text-muted me-1"></i>{{ b.hatch_date }}
+                                            </td>
+                                            <td>
+                                                <span class="fw-semibold">{{ b.current_count|default:b.initial_count }}</span> / {{ b.initial_count }}
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info bg-opacity-20 text-info">{{ b.age_days }} days</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge {% if b.status == 'ACTIVE' %}bg-success{% elif b.status == 'SOLD' %}bg-primary{% else %}bg-danger{% endif %}">
+                                                    {{ b.get_status_display|default:"Active" }}
+                                                </span>
+                                            </td>
+                                            <td class="text-end pe-4">
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="{% url 'products:batch_detail' b.pk %}" class="btn btn-outline-primary" title="View Details">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    <a href="{% url 'products:batch_update' b.pk %}" class="btn btn-outline-secondary" title="Edit">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <a href="{% url 'products:batch_delete' b.pk %}" class="btn btn-outline-danger" title="Delete">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="bi bi-inbox display-4 text-muted d-block mb-3"></i>
+                            <h5 class="text-muted mb-3">No batches found</h5>
+                            <p class="text-muted mb-4">Create your first batch to start managing poultry operations</p>
+                            <a href="{% url 'products:batch_create' %}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle me-2"></i>Create First Batch
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}
