@@ -8,31 +8,48 @@
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
+                <div class="d-flex align-items-center">
+                    <i class="bi
+                        {% if message.tags == 'success' %}bi-check-circle-fill text-success
+                        {% elif message.tags == 'warning' %}bi-exclamation-triangle-fill text-warning
+                        {% elif message.tags == 'error' %}bi-x-circle-fill text-danger
+                        {% else %}bi-info-circle-fill text-info{% endif %} me-2"></i>
+                    <span>{{ message }}</span>
+                </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         {% endfor %}
     {% endif %}
 
     {% if company %}
-        <!-- Company Header -->
+        <!-- Company Header with Enhanced Design -->
         <div class="row mb-4">
-            <div class="col-md-12">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h2 class="mb-1">{{ company.name }}</h2>
-                                <p class="text-muted mb-0">
-                                    <i class="bi bi-geo-alt"></i> {{ company.city }}, {{ company.state_province }}
-                                    {% if membership %}
-                                        <span class="badge bg-primary ms-2">{{ membership.get_role_display }}</span>
-                                    {% endif %}
-                                </p>
+            <div class="col-12">
+                <div class="dashboard-card company-header-card">
+                    <div class="card-body p-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="company-avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3">
+                                        <i class="bi bi-building fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <h1 class="h3 mb-1 fw-bold text-dark">{{ company.name }}</h1>
+                                        <div class="d-flex align-items-center flex-wrap">
+                                            <span class="text-muted me-3">
+                                                <i class="bi bi-geo-alt me-1"></i> {{ company.city }}, {{ company.state_province }}
+                                            </span>
+                                            {% if membership %}
+                                                <span class="badge role-badge bg-primary">{{ membership.get_role_display }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-muted mb-0">Welcome to your farm management dashboard. Monitor your poultry operations and track performance.</p>
                             </div>
-                            <div>
-                                <a href="{% url 'company:profile' %}" class="btn btn-outline-primary">
-                                    <i class="bi bi-gear"></i> Company Settings
+                            <div class="col-md-4 text-md-end">
+                                <a href="{% url 'company:profile' %}" class="btn btn-primary btn-lg px-4">
+                                    <i class="bi bi-gear me-2"></i> Company Settings
                                 </a>
                             </div>
                         </div>
@@ -41,69 +58,166 @@
             </div>
         </div>
 
-        <!-- Statistics Cards -->
+        <!-- Enhanced Statistics Cards -->
         <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card shadow-sm border-start border-primary border-4">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="dashboard-card stat-card h-100">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="text-muted mb-1">Total Batches</h6>
-                                <h3 class="mb-0">{{ stats.total_batches }}</h3>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="stat-content">
+                                <h6 class="stat-label">Total Batches</h6>
+                                <h2 class="stat-value text-primary">{{ stats.total_batches }}</h2>
+                                <p class="stat-description text-muted">Across all operations</p>
                             </div>
-                            <div class="text-primary fs-1">
-                                <i class="bi bi-inbox-fill"></i>
+                            <div class="stat-icon-container bg-primary bg-opacity-10">
+                                <i class="bi bi-inboxes-fill text-primary"></i>
                             </div>
+                        </div>
+                        <div class="stat-trend mt-3">
+                            <span class="badge bg-primary bg-opacity-20 text-primary">
+                                <i class="bi bi-graph-up me-1"></i> All batches
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-3">
-                <div class="card shadow-sm border-start border-success border-4">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="dashboard-card stat-card h-100">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="text-muted mb-1">Active Batches</h6>
-                                <h3 class="mb-0">{{ stats.active_batches }}</h3>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="stat-content">
+                                <h6 class="stat-label">Active Batches</h6>
+                                <h2 class="stat-value text-success">{{ stats.active_batches }}</h2>
+                                <p class="stat-description text-muted">Currently managed</p>
                             </div>
-                            <div class="text-success fs-1">
-                                <i class="bi bi-check-circle-fill"></i>
+                            <div class="stat-icon-container bg-success bg-opacity-10">
+                                <i class="bi bi-check-circle-fill text-success"></i>
                             </div>
+                        </div>
+                        <div class="stat-trend mt-3">
+                            <span class="badge bg-success bg-opacity-20 text-success">
+                                <i class="bi bi-activity me-1"></i> In progress
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-3">
-                <div class="card shadow-sm border-start border-info border-4">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="dashboard-card stat-card h-100">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="text-muted mb-1">Total Chicks</h6>
-                                <h3 class="mb-0">{{ stats.total_chicks|default:0 }}</h3>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="stat-content">
+                                <h6 class="stat-label">Total Chicks</h6>
+                                <h2 class="stat-value text-info">{{ stats.total_chicks|default:0 }}</h2>
+                                <p class="stat-description text-muted">Live inventory</p>
                             </div>
-                            <div class="text-info fs-1">
-                                <i class="bi bi-egg-fill"></i>
+                            <div class="stat-icon-container bg-info bg-opacity-10">
+                                <i class="bi bi-egg-fill text-info"></i>
                             </div>
+                        </div>
+                        <div class="stat-trend mt-3">
+                            <span class="badge bg-info bg-opacity-20 text-info">
+                                <i class="bi bi-arrow-up-short me-1"></i> Growing
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-3">
-                <div class="card shadow-sm border-start border-warning border-4">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="dashboard-card stat-card h-100">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="text-muted mb-1">Inventory Items</h6>
-                                <h3 class="mb-0">{{ stats.inventory_items }}</h3>
-                                {% if stats.low_stock_items > 0 %}
-                                    <span class="badge bg-warning text-dark">{{ stats.low_stock_items }} Low Stock</span>
-                                {% endif %}
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="stat-content">
+                                <h6 class="stat-label">Inventory Items</h6>
+                                <h2 class="stat-value text-warning">{{ stats.inventory_items }}</h2>
+                                <p class="stat-description text-muted">Supplies & equipment</p>
                             </div>
-                            <div class="text-warning fs-1">
-                                <i class="bi bi-box-fill"></i>
+                            <div class="stat-icon-container bg-warning bg-opacity-10">
+                                <i class="bi bi-box-seam-fill text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="stat-trend mt-3">
+                            {% if stats.low_stock_items > 0 %}
+                                <span class="badge bg-danger bg-opacity-20 text-danger">
+                                    <i class="bi bi-exclamation-triangle me-1"></i> {{ stats.low_stock_items }} low stock
+                                </span>
+                            {% else %}
+                                <span class="badge bg-success bg-opacity-20 text-success">
+                                    <i class="bi bi-check-lg me-1"></i> Stock good
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions with Enhanced Design -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="dashboard-card">
+                    <div class="card-header bg-transparent border-bottom-0 pb-0">
+                        <h4 class="card-title mb-0">
+                            <i class="bi bi-lightning-fill text-warning me-2"></i> Quick Actions
+                        </h4>
+                        <p class="text-muted mb-0">Frequently used operations</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-xl-3 col-md-6">
+                                <a href="{% url 'products:batch_create' %}" class="quick-action-card">
+                                    <div class="card h-100 border-0 shadow-sm hover-lift">
+                                        <div class="card-body text-center p-4">
+                                            <div class="quick-action-icon bg-primary bg-opacity-10 text-primary rounded-circle mx-auto mb-3">
+                                                <i class="bi bi-plus-lg"></i>
+                                            </div>
+                                            <h6 class="fw-semibold mb-2">New Batch</h6>
+                                            <p class="text-muted small mb-0">Start a new poultry batch</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <a href="{% url 'products:inventory_create' %}" class="quick-action-card">
+                                    <div class="card h-100 border-0 shadow-sm hover-lift">
+                                        <div class="card-body text-center p-4">
+                                            <div class="quick-action-icon bg-success bg-opacity-10 text-success rounded-circle mx-auto mb-3">
+                                                <i class="bi bi-clipboard-plus"></i>
+                                            </div>
+                                            <h6 class="fw-semibold mb-2">Add Inventory</h6>
+                                            <p class="text-muted small mb-0">Record new supplies</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <a href="{% url 'products:medicine_create' %}" class="quick-action-card">
+                                    <div class="card h-100 border-0 shadow-sm hover-lift">
+                                        <div class="card-body text-center p-4">
+                                            <div class="quick-action-icon bg-info bg-opacity-10 text-info rounded-circle mx-auto mb-3">
+                                                <i class="bi bi-capsule"></i>
+                                            </div>
+                                            <h6 class="fw-semibold mb-2">Add Medicine</h6>
+                                            <p class="text-muted small mb-0">Register medications</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <a href="{% url 'products:feed_formula_create' %}" class="quick-action-card">
+                                    <div class="card h-100 border-0 shadow-sm hover-lift">
+                                        <div class="card-body text-center p-4">
+                                            <div class="quick-action-icon bg-warning bg-opacity-10 text-warning rounded-circle mx-auto mb-3">
+                                                <i class="bi bi-basket"></i>
+                                            </div>
+                                            <h6 class="fw-semibold mb-2">Add Feed Formula</h6>
+                                            <p class="text-muted small mb-0">Create feeding plans</p>
+                                        </div>
+                                    </div>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -111,83 +225,78 @@
             </div>
         </div>
 
-        <!-- Quick Actions -->
-        <div class="row mb-4">
-            <div class="col-md-12">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">Quick Actions</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-3 mb-2">
-                                <a href="{% url 'products:batch_create' %}" class="btn btn-outline-primary w-100">
-                                    <i class="bi bi-plus-circle"></i> New Batch
-                                </a>
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <a href="{% url 'products:inventory_create' %}" class="btn btn-outline-success w-100">
-                                    <i class="bi bi-plus-circle"></i> Add Inventory
-                                </a>
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <a href="{% url 'products:medicine_create' %}" class="btn btn-outline-info w-100">
-                                    <i class="bi bi-plus-circle"></i> Add Medicine
-                                </a>
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <a href="{% url 'products:feed_formula_create' %}" class="btn btn-outline-warning w-100">
-                                    <i class="bi bi-plus-circle"></i> Add Feed Formula
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Batches -->
+        <!-- Recent Batches with Enhanced Table -->
         <div class="row">
-            <div class="col-md-12">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Recent Batches</h5>
-                        <a href="{% url 'products:batch_list' %}" class="btn btn-sm btn-primary">View All</a>
+            <div class="col-12">
+                <div class="dashboard-card">
+                    <div class="card-header bg-transparent border-bottom-0 d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="card-title mb-0">
+                                <i class="bi bi-clock-history text-primary me-2"></i> Recent Batches
+                            </h4>
+                            <p class="text-muted mb-0">Latest poultry batch activities</p>
+                        </div>
+                        <a href="{% url 'products:batch_list' %}" class="btn btn-primary">
+                            <i class="bi bi-eye me-1"></i> View All
+                        </a>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-0">
                         {% if recent_batches %}
                             <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
                                         <tr>
-                                            <th>ID</th>
+                                            <th class="ps-4">Batch ID</th>
                                             <th>Type</th>
                                             <th>Hatch Date</th>
                                             <th>Count</th>
-                                            <th>Age (Days)</th>
+                                            <th>Age</th>
                                             <th>Status</th>
-                                            <th>Actions</th>
+                                            <th class="text-end pe-4">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for batch in recent_batches %}
-                                            <tr>
-                                                <td>#{{ batch.id }}</td>
-                                                <td><span class="badge bg-secondary">{{ batch.get_breeder_type_display }}</span></td>
-                                                <td>{{ batch.hatch_date }}</td>
-                                                <td>{{ batch.current_count|default:batch.initial_count }} / {{ batch.initial_count }}</td>
-                                                <td>{{ batch.age_days }}</td>
+                                            <tr class="batch-row">
+                                                <td class="ps-4 fw-semibold">#{{ batch.id }}</td>
                                                 <td>
-                                                    <span class="badge
-                                                        {% if batch.status == 'ACTIVE' %}bg-success
-                                                        {% elif batch.status == 'SOLD' %}bg-info
-                                                        {% elif batch.status == 'DECEASED' %}bg-danger
-                                                        {% else %}bg-secondary{% endif %}">
-                                                        {{ batch.get_status_display }}
+                                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25">
+                                                        {{ batch.get_breeder_type_display }}
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <a href="{% url 'products:batch_detail' batch.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="bi bi-calendar3 text-muted me-2"></i>
+                                                        {{ batch.hatch_date }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="progress-count">
+                                                        <span class="fw-semibold">{{ batch.current_count|default:batch.initial_count }}</span>
+                                                        <span class="text-muted">/ {{ batch.initial_count }}</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="age-badge">{{ batch.age_days }} days</span>
+                                                </td>
+                                                <td>
+                                                    <span class="status-badge
+                                                        {% if batch.status == 'ACTIVE' %}status-active
+                                                        {% elif batch.status == 'SOLD' %}status-sold
+                                                        {% elif batch.status == 'DECEASED' %}status-deceased
+                                                        {% else %}status-other{% endif %}">
+                                                        <i class="bi
+                                                            {% if batch.status == 'ACTIVE' %}bi-check-circle
+                                                            {% elif batch.status == 'SOLD' %}bi-currency-dollar
+                                                            {% elif batch.status == 'DECEASED' %}bi-x-circle
+                                                            {% else %}bi-dash-circle{% endif %} me-1"></i>
+                                                        {{ batch.get_status_display }}
+                                                    </span>
+                                                </td>
+                                                <td class="text-end pe-4">
+                                                    <a href="{% url 'products:batch_detail' batch.pk %}" class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-eye me-1"></i> View
+                                                    </a>
                                                 </td>
                                             </tr>
                                         {% endfor %}
@@ -196,9 +305,14 @@
                             </div>
                         {% else %}
                             <div class="text-center py-5">
-                                <i class="bi bi-inbox fs-1 text-muted"></i>
-                                <p class="text-muted mt-2">No batches yet. Create your first batch to get started!</p>
-                                <a href="{% url 'products:batch_create' %}" class="btn btn-primary">Create First Batch</a>
+                                <div class="empty-state-icon mb-3">
+                                    <i class="bi bi-inbox display-4 text-muted"></i>
+                                </div>
+                                <h5 class="text-muted mb-3">No batches yet</h5>
+                                <p class="text-muted mb-4">Create your first batch to start managing your poultry operations</p>
+                                <a href="{% url 'products:batch_create' %}" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-plus-circle me-2"></i> Create First Batch
+                                </a>
                             </div>
                         {% endif %}
                     </div>
@@ -207,16 +321,200 @@
         </div>
 
     {% else %}
-        <!-- No Company -->
+        <!-- No Company - Enhanced Design -->
         <div class="row">
-            <div class="col-md-12">
-                <div class="alert alert-warning">
-                    <h4 class="alert-heading">No Company Association</h4>
-                    <p>You are not currently associated with any company. Please contact support for assistance.</p>
+            <div class="col-12">
+                <div class="dashboard-card">
+                    <div class="card-body text-center py-5">
+                        <div class="empty-state-icon mb-4">
+                            <i class="bi bi-building-exclamation display-1 text-warning"></i>
+                        </div>
+                        <h3 class="text-warning mb-3">No Company Association</h3>
+                        <p class="text-muted mb-4">You are not currently associated with any company. Please contact support for assistance or create a new company profile.</p>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="#" class="btn btn-primary">
+                                <i class="bi bi-telephone me-2"></i> Contact Support
+                            </a>
+                            <a href="#" class="btn btn-outline-primary">
+                                <i class="bi bi-plus-circle me-2"></i> Create Company
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     {% endif %}
 </div>
-{% endblock body %}
 
+<style>
+    /* Enhanced Dashboard Styles */
+    .company-header-card {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: none;
+        border-radius: 16px;
+    }
+
+    .company-avatar {
+        width: 60px;
+        height: 60px;
+    }
+
+    .role-badge {
+        font-size: 0.75rem;
+        padding: 0.35em 0.65em;
+    }
+
+    .stat-card {
+        border: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 2.25rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-description {
+        font-size: 0.875rem;
+        margin-bottom: 0;
+    }
+
+    .stat-icon-container {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .stat-trend .badge {
+        font-size: 0.75rem;
+        padding: 0.35em 0.65em;
+    }
+
+    /* Quick Actions */
+    .quick-action-card {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    .quick-action-card .card {
+        transition: all 0.3s ease;
+    }
+
+    .quick-action-card:hover .card {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+    }
+
+    .quick-action-icon {
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    /* Table Enhancements */
+    .batch-row {
+        transition: background-color 0.2s ease;
+    }
+
+    .batch-row:hover {
+        background-color: #f8f9fa;
+    }
+
+    .progress-count {
+        font-size: 0.9rem;
+    }
+
+    .age-badge {
+        background-color: #e7f1ff;
+        color: #0d6efd;
+        padding: 0.35em 0.65em;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .status-badge {
+        padding: 0.5em 1em;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .status-active {
+        background-color: #d1e7dd;
+        color: #0f5132;
+        border: 1px solid #badbcc;
+    }
+
+    .status-sold {
+        background-color: #cff4fc;
+        color: #055160;
+        border: 1px solid #b6effb;
+    }
+
+    .status-deceased {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f1aeb5;
+    }
+
+    .status-other {
+        background-color: #e2e3e5;
+        color: #383d41;
+        border: 1px solid #d6d8db;
+    }
+
+    /* Empty States */
+    .empty-state-icon {
+        opacity: 0.7;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .company-avatar {
+            width: 50px;
+            height: 50px;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+        }
+
+        .stat-icon-container {
+            width: 50px;
+            height: 50px;
+            font-size: 1.25rem;
+        }
+
+        .quick-action-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 1.25rem;
+        }
+    }
+</style>
+{% endblock body %}
