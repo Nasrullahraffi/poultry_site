@@ -11,12 +11,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from products.models import (
     ChickBatch, HealthCheck, FeedFormula, FeedSchedule,
     MedicineProduct, TreatmentRecord, DiseaseCatalog, DiseaseCase,
-    InventoryProduct, PurchaseOrder
+    InventoryProduct
 )
 from products.forms import (
     ChickBatchForm, HealthCheckForm, FeedFormulaForm, FeedScheduleForm,
     MedicineProductForm, TreatmentRecordForm, DiseaseCatalogForm, DiseaseCaseForm,
-    InventoryProductForm, PurchaseOrderForm
+    InventoryProductForm
 )
 
 # ---------------------------------------------------------------------------
@@ -50,7 +50,6 @@ class BatchDetailView(LoginRequiredMixin, DetailView):
         ctx['feed_schedules'] = batch.feed_schedules.select_related('formula').all()
         ctx['treatments'] = batch.treatments.select_related('medicine').all()
         ctx['disease_cases'] = batch.disease_cases.select_related('disease').all()
-        ctx['rfid_tags'] = batch.rfid_tags.all()
         return ctx
 
 # ---------------------------------------------------------------------------
@@ -213,39 +212,6 @@ class InventoryCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 # ---------------------------------------------------------------------------
-# Purchase Orders list/create with inline formset
-# ---------------------------------------------------------------------------
-class PurchaseOrderListView(LoginRequiredMixin, ListView):
-    model = PurchaseOrder
-    template_name = 'products/purchase_order_list.html'
-    context_object_name = 'orders'
-    queryset = PurchaseOrder.objects.select_related('vendor').all()
-
-class PurchaseOrderCreateView(LoginRequiredMixin, View):
-    template_name = 'products/purchase_order_form.html'
-
-    def get(self, request):
-        form = PurchaseOrderForm()
-        formset = PurchaseOrderItemFormSet()
-        return render(request, self.template_name, {'form': form, 'formset': formset})
-
-    @transaction.atomic
-    def post(self, request):
-        form = PurchaseOrderForm(request.POST)
-        formset = PurchaseOrderItemFormSet(request.POST)
-        if form.is_valid() and formset.is_valid():
-            po = form.save()
-            items = formset.save(commit=False)
-            for item in items:
-                item.purchase_order = po
-                item.save()
-            for obj in formset.deleted_objects:
-                obj.delete()
-            messages.success(request, 'Purchase order created.')
-            return redirect('products:purchase_order_list')
-        return render(request, self.template_name, {'form': form, 'formset': formset})
-
-# ---------------------------------------------------------------------------
 # Additional CRUD: Update / Delete Views
 # ---------------------------------------------------------------------------
 class BatchUpdateView(LoginRequiredMixin, UpdateView):
@@ -341,51 +307,4 @@ class InventoryDeleteView(LoginRequiredMixin, DeleteView):
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Inventory product deleted.')
-        return super().delete(request, *args, **kwargs)
-
-class PurchaseOrderDetailView(LoginRequiredMixin, DetailView):
-    model = PurchaseOrder
-    template_name = 'products/purchase_order_detail.html'
-    context_object_name = 'order'
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx['items'] = self.object.items.select_related('product').all()
-        return ctx
-
-class PurchaseOrderUpdateView(LoginRequiredMixin, View):
-    template_name = 'products/purchase_order_form.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        self.po = get_object_or_404(PurchaseOrder, pk=kwargs['pk'])
-        return super().dispatch(request, *args, **kwargs)
-
-    def get(self, request, pk):
-        form = PurchaseOrderForm(instance=self.po)
-        formset = PurchaseOrderItemFormSet(instance=self.po)
-        return render(request, self.template_name, {'form': form, 'formset': formset, 'update': True})
-
-    @transaction.atomic
-    def post(self, request, pk):
-        form = PurchaseOrderForm(request.POST, instance=self.po)
-        formset = PurchaseOrderItemFormSet(request.POST, instance=self.po)
-        if form.is_valid() and formset.is_valid():
-            po = form.save()
-            items = formset.save(commit=False)
-            for item in items:
-                item.purchase_order = po
-                item.save()
-            for obj in formset.deleted_objects:
-                obj.delete()
-            messages.success(request, 'Purchase order updated.')
-            return redirect('products:purchase_order_detail', pk=po.pk)
-        return render(request, self.template_name, {'form': form, 'formset': formset, 'update': True})
-
-class PurchaseOrderDeleteView(LoginRequiredMixin, DeleteView):
-    model = PurchaseOrder
-    template_name = 'products/purchase_order_confirm_delete.html'
-    success_url = reverse_lazy('products:purchase_order_list')
-
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, 'Purchase order deleted.')
         return super().delete(request, *args, **kwargs)

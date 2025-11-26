@@ -5,11 +5,9 @@ from products.views import (
     FeedScheduleCreateView, MedicineListView, MedicineCreateView,
     TreatmentCreateView, DiseaseCatalogListView, DiseaseCatalogCreateView,
     DiseaseCaseCreateView, InventoryListView, InventoryCreateView,
-    PurchaseOrderListView, PurchaseOrderCreateView,
     BatchUpdateView, BatchDeleteView, FeedFormulaUpdateView, FeedFormulaDeleteView,
     MedicineUpdateView, MedicineDeleteView, DiseaseCatalogUpdateView, DiseaseCatalogDeleteView,
-    InventoryUpdateView, InventoryDeleteView, PurchaseOrderDetailView, PurchaseOrderUpdateView,
-    PurchaseOrderDeleteView
+    InventoryUpdateView, InventoryDeleteView
 )
 
 app_name = 'products'
@@ -49,11 +47,4 @@ urlpatterns = [
     path('inventory/new/', InventoryCreateView.as_view(), name='inventory_create'),
     path('inventory/<int:pk>/edit/', InventoryUpdateView.as_view(), name='inventory_update'),
     path('inventory/<int:pk>/delete/', InventoryDeleteView.as_view(), name='inventory_delete'),
-
-    # Purchase Orders
-    path('purchase-orders/', PurchaseOrderListView.as_view(), name='purchase_order_list'),
-    path('purchase-orders/new/', PurchaseOrderCreateView.as_view(), name='purchase_order_create'),
-    path('purchase-orders/<int:pk>/', PurchaseOrderDetailView.as_view(), name='purchase_order_detail'),
-    path('purchase-orders/<int:pk>/edit/', PurchaseOrderUpdateView.as_view(), name='purchase_order_update'),
-    path('purchase-orders/<int:pk>/delete/', PurchaseOrderDeleteView.as_view(), name='purchase_order_delete'),
 ]
