@@ -1,8 +1,6 @@
-from django.shortcuts import redirect, get_object_or_404, render
+from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.db import transaction
-from django.views import View
 from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, DeleteView
 )
@@ -67,12 +65,14 @@ class BatchListView(LoginRequiredMixin, CompanyScopedMixin, ListView):
     model = ChickBatch
     template_name = 'products/batch_list.html'
     context_object_name = 'batches'
+    login_url = 'company:login'
 
 class BatchCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
     model = ChickBatch
     form_class = ChickBatchForm
     template_name = 'products/batch_form.html'
     success_url = reverse_lazy('products:batch_list')
+    login_url = 'company:login'
 
     def form_valid(self, form):
         result = super().form_valid(form)
@@ -83,6 +83,7 @@ class BatchDetailView(LoginRequiredMixin, CompanyScopedMixin, DetailView):
     model = ChickBatch
     template_name = 'products/batch_detail.html'
     context_object_name = 'batch'
+    login_url = 'company:login'
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -97,6 +98,7 @@ class BatchUpdateView(LoginRequiredMixin, CompanyScopedMixin, UpdateView):
     model = ChickBatch
     form_class = ChickBatchForm
     template_name = 'products/batch_form.html'
+    login_url = 'company:login'
 
     def form_valid(self, form):
         result = super().form_valid(form)
@@ -107,6 +109,7 @@ class BatchDeleteView(LoginRequiredMixin, CompanyScopedMixin, DeleteView):
     model = ChickBatch
     template_name = 'products/batch_confirm_delete.html'
     success_url = reverse_lazy('products:batch_list')
+    login_url = 'company:login'
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Batch deleted.')
@@ -115,13 +118,19 @@ class BatchDeleteView(LoginRequiredMixin, CompanyScopedMixin, DeleteView):
 # ---------------------------------------------------------------------------
 # Health Check Create
 # ---------------------------------------------------------------------------
-class HealthCheckCreateView(LoginRequiredMixin, CreateView):
+class HealthCheckCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
     model = HealthCheck
     form_class = HealthCheckForm
     template_name = 'products/healthcheck_form.html'
+    login_url = 'company:login'
 
     def dispatch(self, request, *args, **kwargs):
         self.batch = get_object_or_404(ChickBatch, pk=kwargs['batch_pk'])
+        # Verify batch belongs to user's company
+        company = self.get_user_company()
+        if company and self.batch.company != company:
+            messages.error(request, 'Access denied: This batch does not belong to your company.')
+            return redirect('company:dashboard')
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -139,28 +148,36 @@ class HealthCheckCreateView(LoginRequiredMixin, CreateView):
 # ---------------------------------------------------------------------------
 # Feed Formula List/Create & Feed Schedule Create
 # ---------------------------------------------------------------------------
-class FeedFormulaListView(LoginRequiredMixin, ListView):
+class FeedFormulaListView(LoginRequiredMixin, CompanyScopedMixin, ListView):
     model = FeedFormula
     template_name = 'products/feed_formula_list.html'
     context_object_name = 'formulas'
+    login_url = 'company:login'
 
-class FeedFormulaCreateView(LoginRequiredMixin, CreateView):
+class FeedFormulaCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
     model = FeedFormula
     form_class = FeedFormulaForm
     template_name = 'products/feed_formula_form.html'
     success_url = reverse_lazy('products:feed_formula_list')
+    login_url = 'company:login'
 
     def form_valid(self, form):
         messages.success(self.request, 'Feed formula created.')
         return super().form_valid(form)
 
-class FeedScheduleCreateView(LoginRequiredMixin, CreateView):
+class FeedScheduleCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
     model = FeedSchedule
     form_class = FeedScheduleForm
     template_name = 'products/feed_schedule_form.html'
+    login_url = 'company:login'
 
     def dispatch(self, request, *args, **kwargs):
         self.batch = get_object_or_404(ChickBatch, pk=kwargs['batch_pk'])
+        # Verify batch belongs to user's company
+        company = self.get_user_company()
+        if company and self.batch.company != company:
+            messages.error(request, 'Access denied: This batch does not belong to your company.')
+            return redirect('company:dashboard')
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -178,28 +195,36 @@ class FeedScheduleCreateView(LoginRequiredMixin, CreateView):
 # ---------------------------------------------------------------------------
 # Medicine list/create & Treatment create
 # ---------------------------------------------------------------------------
-class MedicineListView(LoginRequiredMixin, ListView):
+class MedicineListView(LoginRequiredMixin, CompanyScopedMixin, ListView):
     model = MedicineProduct
     template_name = 'products/medicine_list.html'
     context_object_name = 'medicines'
+    login_url = 'company:login'
 
-class MedicineCreateView(LoginRequiredMixin, CreateView):
+class MedicineCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
     model = MedicineProduct
     form_class = MedicineProductForm
     template_name = 'products/medicine_form.html'
     success_url = reverse_lazy('products:medicine_list')
+    login_url = 'company:login'
 
     def form_valid(self, form):
         messages.success(self.request, 'Medicine added.')
         return super().form_valid(form)
 
-class TreatmentCreateView(LoginRequiredMixin, CreateView):
+class TreatmentCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
     model = TreatmentRecord
     form_class = TreatmentRecordForm
     template_name = 'products/treatment_form.html'
+    login_url = 'company:login'
 
     def dispatch(self, request, *args, **kwargs):
         self.batch = get_object_or_404(ChickBatch, pk=kwargs['batch_pk'])
+        # Verify batch belongs to user's company
+        company = self.get_user_company()
+        if company and self.batch.company != company:
+            messages.error(request, 'Access denied: This batch does not belong to your company.')
+            return redirect('company:dashboard')
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -217,28 +242,36 @@ class TreatmentCreateView(LoginRequiredMixin, CreateView):
 # ---------------------------------------------------------------------------
 # Disease catalog list/create & case create
 # ---------------------------------------------------------------------------
-class DiseaseCatalogListView(LoginRequiredMixin, ListView):
+class DiseaseCatalogListView(LoginRequiredMixin, CompanyScopedMixin, ListView):
     model = DiseaseCatalog
     template_name = 'products/disease_catalog_list.html'
     context_object_name = 'diseases'
+    login_url = 'company:login'
 
-class DiseaseCatalogCreateView(LoginRequiredMixin, CreateView):
+class DiseaseCatalogCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
     model = DiseaseCatalog
     form_class = DiseaseCatalogForm
     template_name = 'products/disease_catalog_form.html'
     success_url = reverse_lazy('products:disease_catalog_list')
+    login_url = 'company:login'
 
     def form_valid(self, form):
         messages.success(self.request, 'Disease catalog entry added.')
         return super().form_valid(form)
 
-class DiseaseCaseCreateView(LoginRequiredMixin, CreateView):
+class DiseaseCaseCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
     model = DiseaseCase
     form_class = DiseaseCaseForm
     template_name = 'products/disease_case_form.html'
+    login_url = 'company:login'
 
     def dispatch(self, request, *args, **kwargs):
         self.batch = get_object_or_404(ChickBatch, pk=kwargs['batch_pk'])
+        # Verify batch belongs to user's company
+        company = self.get_user_company()
+        if company and self.batch.company != company:
+            messages.error(request, 'Access denied: This batch does not belong to your company.')
+            return redirect('company:dashboard')
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -256,16 +289,18 @@ class DiseaseCaseCreateView(LoginRequiredMixin, CreateView):
 # ---------------------------------------------------------------------------
 # Inventory list/create
 # ---------------------------------------------------------------------------
-class InventoryListView(LoginRequiredMixin, ListView):
+class InventoryListView(LoginRequiredMixin, CompanyScopedMixin, ListView):
     model = InventoryProduct
     template_name = 'products/inventory_list.html'
     context_object_name = 'products'
+    login_url = 'company:login'
 
-class InventoryCreateView(LoginRequiredMixin, CreateView):
+class InventoryCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
     model = InventoryProduct
     form_class = InventoryProductForm
     template_name = 'products/inventory_form.html'
     success_url = reverse_lazy('products:inventory_list')
+    login_url = 'company:login'
 
     def form_valid(self, form):
         messages.success(self.request, 'Inventory product created.')
@@ -274,77 +309,85 @@ class InventoryCreateView(LoginRequiredMixin, CreateView):
 # ---------------------------------------------------------------------------
 # Additional CRUD: Update / Delete Views
 # ---------------------------------------------------------------------------
-class FeedFormulaUpdateView(LoginRequiredMixin, UpdateView):
+class FeedFormulaUpdateView(LoginRequiredMixin, CompanyScopedMixin, UpdateView):
     model = FeedFormula
     form_class = FeedFormulaForm
     template_name = 'products/feed_formula_form.html'
     success_url = reverse_lazy('products:feed_formula_list')
+    login_url = 'company:login'
 
     def form_valid(self, form):
         messages.success(self.request, 'Feed formula updated.')
         return super().form_valid(form)
 
-class FeedFormulaDeleteView(LoginRequiredMixin, DeleteView):
+class FeedFormulaDeleteView(LoginRequiredMixin, CompanyScopedMixin, DeleteView):
     model = FeedFormula
     template_name = 'products/feed_formula_confirm_delete.html'
     success_url = reverse_lazy('products:feed_formula_list')
+    login_url = 'company:login'
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Feed formula deleted.')
         return super().delete(request, *args, **kwargs)
 
-class MedicineUpdateView(LoginRequiredMixin, UpdateView):
+class MedicineUpdateView(LoginRequiredMixin, CompanyScopedMixin, UpdateView):
     model = MedicineProduct
     form_class = MedicineProductForm
     template_name = 'products/medicine_form.html'
     success_url = reverse_lazy('products:medicine_list')
+    login_url = 'company:login'
 
     def form_valid(self, form):
         messages.success(self.request, 'Medicine updated.')
         return super().form_valid(form)
 
-class MedicineDeleteView(LoginRequiredMixin, DeleteView):
+class MedicineDeleteView(LoginRequiredMixin, CompanyScopedMixin, DeleteView):
     model = MedicineProduct
     template_name = 'products/medicine_confirm_delete.html'
     success_url = reverse_lazy('products:medicine_list')
+    login_url = 'company:login'
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Medicine deleted.')
         return super().delete(request, *args, **kwargs)
 
-class DiseaseCatalogUpdateView(LoginRequiredMixin, UpdateView):
+class DiseaseCatalogUpdateView(LoginRequiredMixin, CompanyScopedMixin, UpdateView):
     model = DiseaseCatalog
     form_class = DiseaseCatalogForm
     template_name = 'products/disease_catalog_form.html'
     success_url = reverse_lazy('products:disease_catalog_list')
+    login_url = 'company:login'
 
     def form_valid(self, form):
         messages.success(self.request, 'Disease catalog entry updated.')
         return super().form_valid(form)
 
-class DiseaseCatalogDeleteView(LoginRequiredMixin, DeleteView):
+class DiseaseCatalogDeleteView(LoginRequiredMixin, CompanyScopedMixin, DeleteView):
     model = DiseaseCatalog
     template_name = 'products/disease_catalog_confirm_delete.html'
     success_url = reverse_lazy('products:disease_catalog_list')
+    login_url = 'company:login'
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Disease catalog entry deleted.')
         return super().delete(request, *args, **kwargs)
 
-class InventoryUpdateView(LoginRequiredMixin, UpdateView):
+class InventoryUpdateView(LoginRequiredMixin, CompanyScopedMixin, UpdateView):
     model = InventoryProduct
     form_class = InventoryProductForm
     template_name = 'products/inventory_form.html'
     success_url = reverse_lazy('products:inventory_list')
+    login_url = 'company:login'
 
     def form_valid(self, form):
         messages.success(self.request, 'Inventory product updated.')
         return super().form_valid(form)
 
-class InventoryDeleteView(LoginRequiredMixin, DeleteView):
+class InventoryDeleteView(LoginRequiredMixin, CompanyScopedMixin, DeleteView):
     model = InventoryProduct
     template_name = 'products/inventory_confirm_delete.html'
     success_url = reverse_lazy('products:inventory_list')
+    login_url = 'company:login'
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Inventory product deleted.')
