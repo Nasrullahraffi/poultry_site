@@ -295,6 +295,19 @@ class InventoryListView(LoginRequiredMixin, CompanyScopedMixin, ListView):
     context_object_name = 'products'
     login_url = 'company:login'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        products = context['products']
+
+        # Calculate stats
+        context['in_stock_count'] = sum(1 for p in products if p.stock_on_hand > 0)
+        context['low_stock_count'] = sum(1 for p in products if p.needs_reorder)
+        context['out_of_stock_count'] = sum(1 for p in products if p.stock_on_hand == 0)
+        context['reorder_count'] = sum(1 for p in products if p.needs_reorder)
+        context['categories_count'] = products.values('category').distinct().count() if products else 0
+
+        return context
+
 class InventoryCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
     model = InventoryProduct
     form_class = InventoryProductForm
