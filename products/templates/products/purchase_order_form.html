@@ -1,2 +1,0 @@
-{% extends 'base.html' %}{% block content %}<h1>New Purchase Order</h1><form method="post">{% csrf_token %}{{ form.as_p }}<hr><h5>Items</h5>{{ formset.management_form }}<table class="table table-sm"><thead><tr><th>Product</th><th>Qty</th><th>Unit Cost</th><th>Received</th><th>Delete</th></tr></thead><tbody>{% for f in formset %}<tr>{% for field in f.visible_fields %}<td>{{ field }}</td>{% endfor %}<td>{% if f.can_delete %}{{ f.DELETE }}{% endif %}</td></tr>{% endfor %}</tbody></table><button class="btn btn-success">Save</button></form>{% endblock %}
-

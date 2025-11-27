@@ -63,14 +63,14 @@ class CompanyScopedMixin:
 # ---------------------------------------------------------------------------
 class BatchListView(LoginRequiredMixin, CompanyScopedMixin, ListView):
     model = ChickBatch
-    template_name = 'products/batch_list.html'
+    template_name = 'batch/batch_list.html'
     context_object_name = 'batches'
     login_url = 'company:login'
 
 class BatchCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
     model = ChickBatch
     form_class = ChickBatchForm
-    template_name = 'products/batch_form.html'
+    template_name = 'batch/batch_form.html'
     success_url = reverse_lazy('products:batch_list')
     login_url = 'company:login'
 
@@ -81,7 +81,7 @@ class BatchCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
 
 class BatchDetailView(LoginRequiredMixin, CompanyScopedMixin, DetailView):
     model = ChickBatch
-    template_name = 'products/batch_detail.html'
+    template_name = 'batch/batch_detail.html'
     context_object_name = 'batch'
     login_url = 'company:login'
 
@@ -97,7 +97,7 @@ class BatchDetailView(LoginRequiredMixin, CompanyScopedMixin, DetailView):
 class BatchUpdateView(LoginRequiredMixin, CompanyScopedMixin, UpdateView):
     model = ChickBatch
     form_class = ChickBatchForm
-    template_name = 'products/batch_form.html'
+    template_name = 'batch/batch_form.html'
     login_url = 'company:login'
 
     def form_valid(self, form):
@@ -107,7 +107,7 @@ class BatchUpdateView(LoginRequiredMixin, CompanyScopedMixin, UpdateView):
 
 class BatchDeleteView(LoginRequiredMixin, CompanyScopedMixin, DeleteView):
     model = ChickBatch
-    template_name = 'products/batch_confirm_delete.html'
+    template_name = 'batch/batch_confirm_delete.html'
     success_url = reverse_lazy('products:batch_list')
     login_url = 'company:login'
 
@@ -192,25 +192,72 @@ class FeedScheduleCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView)
         ctx['batch'] = self.batch
         return ctx
 
+
+class FeedFormulaUpdateView(LoginRequiredMixin, CompanyScopedMixin, UpdateView):
+    model = FeedFormula
+    form_class = FeedFormulaForm
+    template_name = 'products/feed_formula_form.html'
+    success_url = reverse_lazy('products:feed_formula_list')
+    login_url = 'company:login'
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Feed formula updated.')
+        return super().form_valid(form)
+
+class FeedFormulaDeleteView(LoginRequiredMixin, CompanyScopedMixin, DeleteView):
+    model = FeedFormula
+    template_name = 'products/feed_formula_confirm_delete.html'
+    success_url = reverse_lazy('products:feed_formula_list')
+    login_url = 'company:login'
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Feed formula deleted.')
+        return super().delete(request, *args, **kwargs)
+
+
+
 # ---------------------------------------------------------------------------
 # Medicine list/create & Treatment create
 # ---------------------------------------------------------------------------
 class MedicineListView(LoginRequiredMixin, CompanyScopedMixin, ListView):
     model = MedicineProduct
-    template_name = 'products/medicine_list.html'
+    template_name = 'medicine/medicine_list.html'
     context_object_name = 'medicines'
     login_url = 'company:login'
 
 class MedicineCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
     model = MedicineProduct
     form_class = MedicineProductForm
-    template_name = 'products/medicine_form.html'
+    template_name = 'medicine/medicine_form.html'
     success_url = reverse_lazy('products:medicine_list')
     login_url = 'company:login'
 
     def form_valid(self, form):
         messages.success(self.request, 'Medicine added.')
         return super().form_valid(form)
+
+class MedicineUpdateView(LoginRequiredMixin, CompanyScopedMixin, UpdateView):
+    model = MedicineProduct
+    form_class = MedicineProductForm
+    template_name = 'products/templates/medicine/medicine_form.html'
+    success_url = reverse_lazy('products:medicine_list')
+    login_url = 'company:login'
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Medicine updated.')
+        return super().form_valid(form)
+
+class MedicineDeleteView(LoginRequiredMixin, CompanyScopedMixin, DeleteView):
+    model = MedicineProduct
+    template_name = 'medicine/medicine_confirm_delete.html'
+    success_url = reverse_lazy('products:medicine_list')
+    login_url = 'company:login'
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Medicine deleted.')
+        return super().delete(request, *args, **kwargs)
+
+
 
 class TreatmentCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
     model = TreatmentRecord
@@ -244,14 +291,38 @@ class TreatmentCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
 # ---------------------------------------------------------------------------
 class DiseaseCatalogListView(LoginRequiredMixin, CompanyScopedMixin, ListView):
     model = DiseaseCatalog
-    template_name = 'products/disease_catalog_list.html'
+    template_name = 'disease/disease_catalog_list.html'
     context_object_name = 'diseases'
     login_url = 'company:login'
+
+
+
+class DiseaseCatalogUpdateView(LoginRequiredMixin, CompanyScopedMixin, UpdateView):
+    model = DiseaseCatalog
+    form_class = DiseaseCatalogForm
+    template_name = 'disease/disease_catalog_form.html'
+    success_url = reverse_lazy('products:disease_catalog_list')
+    login_url = 'company:login'
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Disease catalog entry updated.')
+        return super().form_valid(form)
+
+class DiseaseCatalogDeleteView(LoginRequiredMixin, CompanyScopedMixin, DeleteView):
+    model = DiseaseCatalog
+    template_name = 'disease/disease_catalog_confirm_delete.html'
+    success_url = reverse_lazy('products:disease_catalog_list')
+    login_url = 'company:login'
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Disease catalog entry deleted.')
+        return super().delete(request, *args, **kwargs)
+
 
 class DiseaseCatalogCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
     model = DiseaseCatalog
     form_class = DiseaseCatalogForm
-    template_name = 'products/disease_catalog_form.html'
+    template_name = 'disease/disease_catalog_form.html'
     success_url = reverse_lazy('products:disease_catalog_list')
     login_url = 'company:login'
 
@@ -262,7 +333,7 @@ class DiseaseCatalogCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateVie
 class DiseaseCaseCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
     model = DiseaseCase
     form_class = DiseaseCaseForm
-    template_name = 'products/disease_case_form.html'
+    template_name = 'disease/disease_case_form.html'
     login_url = 'company:login'
 
     def dispatch(self, request, *args, **kwargs):
@@ -288,6 +359,12 @@ class DiseaseCaseCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
 
 # ---------------------------------------------------------------------------
 # Inventory list/create
+# ---------------------------------------------------------------------------
+
+
+
+#--------------------------
+# Inventory Views
 # ---------------------------------------------------------------------------
 class InventoryListView(LoginRequiredMixin, CompanyScopedMixin, ListView):
     model = InventoryProduct
@@ -319,71 +396,6 @@ class InventoryCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
         messages.success(self.request, 'Inventory product created.')
         return super().form_valid(form)
 
-# ---------------------------------------------------------------------------
-# Additional CRUD: Update / Delete Views
-# ---------------------------------------------------------------------------
-class FeedFormulaUpdateView(LoginRequiredMixin, CompanyScopedMixin, UpdateView):
-    model = FeedFormula
-    form_class = FeedFormulaForm
-    template_name = 'products/feed_formula_form.html'
-    success_url = reverse_lazy('products:feed_formula_list')
-    login_url = 'company:login'
-
-    def form_valid(self, form):
-        messages.success(self.request, 'Feed formula updated.')
-        return super().form_valid(form)
-
-class FeedFormulaDeleteView(LoginRequiredMixin, CompanyScopedMixin, DeleteView):
-    model = FeedFormula
-    template_name = 'products/feed_formula_confirm_delete.html'
-    success_url = reverse_lazy('products:feed_formula_list')
-    login_url = 'company:login'
-
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, 'Feed formula deleted.')
-        return super().delete(request, *args, **kwargs)
-
-class MedicineUpdateView(LoginRequiredMixin, CompanyScopedMixin, UpdateView):
-    model = MedicineProduct
-    form_class = MedicineProductForm
-    template_name = 'products/medicine_form.html'
-    success_url = reverse_lazy('products:medicine_list')
-    login_url = 'company:login'
-
-    def form_valid(self, form):
-        messages.success(self.request, 'Medicine updated.')
-        return super().form_valid(form)
-
-class MedicineDeleteView(LoginRequiredMixin, CompanyScopedMixin, DeleteView):
-    model = MedicineProduct
-    template_name = 'products/medicine_confirm_delete.html'
-    success_url = reverse_lazy('products:medicine_list')
-    login_url = 'company:login'
-
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, 'Medicine deleted.')
-        return super().delete(request, *args, **kwargs)
-
-class DiseaseCatalogUpdateView(LoginRequiredMixin, CompanyScopedMixin, UpdateView):
-    model = DiseaseCatalog
-    form_class = DiseaseCatalogForm
-    template_name = 'products/disease_catalog_form.html'
-    success_url = reverse_lazy('products:disease_catalog_list')
-    login_url = 'company:login'
-
-    def form_valid(self, form):
-        messages.success(self.request, 'Disease catalog entry updated.')
-        return super().form_valid(form)
-
-class DiseaseCatalogDeleteView(LoginRequiredMixin, CompanyScopedMixin, DeleteView):
-    model = DiseaseCatalog
-    template_name = 'products/disease_catalog_confirm_delete.html'
-    success_url = reverse_lazy('products:disease_catalog_list')
-    login_url = 'company:login'
-
-    def delete(self, request, *args, **kwargs):
-        messages.success(self.request, 'Disease catalog entry deleted.')
-        return super().delete(request, *args, **kwargs)
 
 class InventoryUpdateView(LoginRequiredMixin, CompanyScopedMixin, UpdateView):
     model = InventoryProduct
