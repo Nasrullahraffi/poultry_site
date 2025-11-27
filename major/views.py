@@ -16,5 +16,5 @@ class BreederCreateView(FormView):
     def form_invalid(self, form):
         return render(self.request, self.template_name, {'form': form})
 
-class HomeView(TemplateView):
+class FrontpageView(TemplateView):
     template_name = 'frontpage.html'

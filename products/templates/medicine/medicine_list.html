@@ -3,94 +3,110 @@
 
 {% block title %}Medicines - Tokyo Farm{% endblock title %}
 
+{% block page_title %}Medicine Catalog{% endblock %}
+
 {% block body %}
-<div class="container-fluid px-4 py-4">
+<div class="container-fluid">
     <!-- Page Header -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="h2 mb-2 fw-bold text-dark">
-                        <i class="bi bi-capsule me-2 text-primary"></i>Medicine Catalog
-                    </h1>
+                    <h1 class="h3 mb-1"><i class="bi bi-capsule me-2 text-primary"></i>Medicine Catalog</h1>
                     <p class="text-muted mb-0">Manage medications, treatments, and vaccination schedules for poultry health</p>
                 </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-primary">
-                        <i class="bi bi-filter me-2"></i>Filter
-                    </button>
-                    <a href="{% url 'products:medicine_create' %}" class="btn btn-primary">
-                        <i class="bi bi-plus-circle me-2"></i>Add Medicine
-                    </a>
-                </div>
+                <a href="{% url 'products:medicine_create' %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-plus-circle me-2"></i>New Medicine
+                </a>
             </div>
         </div>
     </div>
 
     <!-- Quick Stats -->
     <div class="row mb-4">
-        <div class="col-xl-3 col-md-6 mb-3">
-            <div class="stat-card">
-                <div class="stat-icon bg-primary bg-opacity-10 text-primary">
-                    <i class="bi bi-capsule"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>{{ medicines|length }}</h3>
-                    <p>Total Medicines</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6 mb-3">
-            <div class="stat-card">
-                <div class="stat-icon bg-success bg-opacity-10 text-success">
-                    <i class="bi bi-shield-check"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>{{ vaccines_count|default:"0" }}</h3>
-                    <p>Vaccines</p>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card stat-card-sm h-100">
+                <div class="card-body text-center p-3">
+                    <div class="text-primary mb-2">
+                        <i class="bi bi-capsule fs-4"></i>
+                    </div>
+                    <h4 class="mb-1 fw-bold">{{ medicines|length }}</h4>
+                    <small class="text-muted">Total Medicines</small>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6 mb-3">
-            <div class="stat-card">
-                <div class="stat-icon bg-info bg-opacity-10 text-info">
-                    <i class="bi bi-droplet"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>{{ treatments_count|default:"0" }}</h3>
-                    <p>Treatments</p>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card stat-card-sm h-100">
+                <div class="card-body text-center p-3">
+                    <div class="text-success mb-2">
+                        <i class="bi bi-shield-check fs-4"></i>
+                    </div>
+                    <h4 class="mb-1 fw-bold">{{ vaccines_count|default:"0" }}</h4>
+                    <small class="text-muted">Vaccines</small>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6 mb-3">
-            <div class="stat-card">
-                <div class="stat-icon bg-warning bg-opacity-10 text-warning">
-                    <i class="bi bi-exclamation-triangle"></i>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card stat-card-sm h-100">
+                <div class="card-body text-center p-3">
+                    <div class="text-info mb-2">
+                        <i class="bi bi-droplet fs-4"></i>
+                    </div>
+                    <h4 class="mb-1 fw-bold">{{ treatments_count|default:"0" }}</h4>
+                    <small class="text-muted">Treatments</small>
                 </div>
-                <div class="stat-content">
-                    <h3>{{ critical_count|default:"0" }}</h3>
-                    <p>Critical Stock</p>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card stat-card-sm h-100">
+                <div class="card-body text-center p-3">
+                    <div class="text-warning mb-2">
+                        <i class="bi bi-exclamation-triangle fs-4"></i>
+                    </div>
+                    <h4 class="mb-1 fw-bold">{{ critical_count|default:"0" }}</h4>
+                    <small class="text-muted">Critical Stock</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card stat-card-sm h-100">
+                <div class="card-body text-center p-3">
+                    <div class="text-danger mb-2">
+                        <i class="bi bi-x-circle fs-4"></i>
+                    </div>
+                    <h4 class="mb-1 fw-bold">{{ out_of_stock_count|default:"0" }}</h4>
+                    <small class="text-muted">Out of Stock</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card stat-card-sm h-100">
+                <div class="card-body text-center p-3">
+                    <div class="text-secondary mb-2">
+                        <i class="bi bi-clock-history fs-4"></i>
+                    </div>
+                    <h4 class="mb-1 fw-bold">{{ expiring_count|default:"0" }}</h4>
+                    <small class="text-muted">Expiring Soon</small>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Medicine Table -->
+    <!-- Medicines Table -->
     <div class="row">
         <div class="col-12">
-            <div class="dashboard-card">
+            <div class="card dashboard-card">
                 <div class="card-header bg-transparent border-bottom-0 d-flex justify-content-between align-items-center">
                     <div>
                         <h5 class="card-title mb-0">
-                            <i class="bi bi-list-ul me-2 text-primary"></i>All Medicines
+                            <i class="bi bi-list-check me-2 text-primary"></i>All Medicines
                         </h5>
-                        <p class="text-muted mb-0 small">Showing {{ medicines|length }} medications</p>
+                        <p class="text-muted mb-0">{{ medicines|length }} medicines managed</p>
                     </div>
-                    <div class="d-flex gap-2">
-                        <input type="text" class="form-control form-control-sm" placeholder="Search medicines..." style="min-width: 200px;">
-                        <button class="btn btn-sm btn-outline-secondary">
-                            <i class="bi bi-sort-down"></i>
-                        </button>
+                    <div class="d-flex align-items-center gap-2">
+                        <a href="#" class="btn btn-outline-primary">
+                            <i class="bi bi-download me-2"></i>Export
+                        </a>
                     </div>
                 </div>
                 <div class="card-body p-0">
@@ -99,28 +115,31 @@
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th class="ps-4 fw-semibold">Medicine Details</th>
-                                        <th class="fw-semibold">Type & Usage</th>
-                                        <th class="fw-semibold">Dosage & Administration</th>
-                                        <th class="fw-semibold">Stock Status</th>
-                                        <th class="text-end pe-4 fw-semibold">Actions</th>
+                                        <th class="ps-4">Medicine Details</th>
+                                        <th>Type & Purpose</th>
+                                        <th>Dosage & Administration</th>
+                                        <th>Stock Status</th>
+                                        <th>Expiry</th>
+                                        <th class="text-end pe-4">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for medicine in medicines %}
-                                        <tr class="medicine-row">
+                                        <tr class="medicine-table-row">
                                             <td class="ps-4">
                                                 <div class="d-flex align-items-center">
-                                                    <div class="medicine-icon me-3">
-                                                        <i class="bi bi-capsule-pill text-primary"></i>
+                                                    <div class="medicine-avatar bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3">
+                                                        <i class="bi bi-capsule"></i>
                                                     </div>
                                                     <div>
-                                                        <h6 class="mb-1 fw-semibold">{{ medicine.name }}</h6>
+                                                        <a href="#" class="text-decoration-none fw-semibold text-dark d-block">
+                                                            {{ medicine.name }}
+                                                        </a>
                                                         <small class="text-muted">
                                                             {% if medicine.manufacturer %}
                                                                 {{ medicine.manufacturer }}
                                                             {% else %}
-                                                                No manufacturer specified
+                                                                No manufacturer
                                                             {% endif %}
                                                         </small>
                                                     </div>
@@ -128,25 +147,66 @@
                                             </td>
                                             <td>
                                                 <div class="d-flex flex-column">
-                                                    <span class="badge medicine-type mb-1">
-                                                        {{ medicine.get_breeder_type_display|default:"General Use" }}
+                                                    <span class="badge type-badge
+                                                        {% if medicine.medicine_type == 'VACCINE' %}bg-success bg-opacity-10 text-success border border-success border-opacity-25
+                                                        {% elif medicine.medicine_type == 'ANTIBIOTIC' %}bg-info bg-opacity-10 text-info border border-info border-opacity-25
+                                                        {% elif medicine.medicine_type == 'VITAMIN' %}bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25
+                                                        {% elif medicine.medicine_type == 'DEWORMER' %}bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25
+                                                        {% else %}bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25{% endif %}">
+                                                        {{ medicine.get_medicine_type_display|default:"General" }}
                                                     </span>
                                                     {% if medicine.purpose %}
-                                                        <small class="text-muted">{{ medicine.purpose|truncatewords:8 }}</small>
+                                                        <small class="text-muted mt-1">{{ medicine.purpose|truncatewords:6 }}</small>
                                                     {% else %}
-                                                        <small class="text-muted">No purpose specified</small>
+                                                        <small class="text-muted mt-1">No purpose specified</small>
                                                     {% endif %}
                                                 </div>
                                             </td>
                                             <td>
-                                                <div class="d-flex flex-column">
-                                                    {% if medicine.dosage %}
-                                                        <span class="fw-medium text-dark">{{ medicine.dosage }}</span>
-                                                        <small class="text-muted">
-                                                            {% if medicine.administration_method %}
-                                                                {{ medicine.administration_method }}
+                                                <div class="dosage-info">
+                                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                                        <span class="fw-semibold">{{ medicine.dosage|default:"Standard" }}</span>
+                                                        {% if medicine.administration_method %}
+                                                            <small class="text-muted">{{ medicine.administration_method }}</small>
+                                                        {% endif %}
+                                                    </div>
+                                                    {% if medicine.frequency %}
+                                                        <div class="progress dosage-progress" style="height: 4px;">
+                                                            <div class="progress-bar bg-info" style="width: 100%"></div>
+                                                        </div>
+                                                        <small class="text-muted">{{ medicine.frequency }}</small>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="stock-info">
+                                                    {% if medicine.stock_quantity %}
+                                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                                            <span class="fw-semibold">{{ medicine.stock_quantity }}</span>
+                                                            <small class="text-muted stock-percent">
+                                                                {% if medicine.min_stock_level %}
+                                                                    {% widthratio medicine.stock_quantity medicine.min_stock_level 100 %}%
+                                                                {% endif %}
+                                                            </small>
+                                                        </div>
+                                                        <div class="progress stock-progress" style="height: 4px;">
+                                                            {% if medicine.min_stock_level %}
+                                                                {% widthratio medicine.stock_quantity medicine.min_stock_level 100 as stock_percent %}
+                                                                <div class="progress-bar
+                                                                    {% if stock_percent >= 100 %}bg-success
+                                                                    {% elif stock_percent >= 50 %}bg-warning
+                                                                    {% else %}bg-danger{% endif %}"
+                                                                    style="width: {{ stock_percent }}%">
+                                                                </div>
                                                             {% else %}
-                                                                Standard administration
+                                                                <div class="progress-bar bg-success" style="width: 100%"></div>
+                                                            {% endif %}
+                                                        </div>
+                                                        <small class="text-muted">
+                                                            {% if medicine.min_stock_level %}
+                                                                Min: {{ medicine.min_stock_level }}
+                                                            {% else %}
+                                                                No min level
                                                             {% endif %}
                                                         </small>
                                                     {% else %}
@@ -155,38 +215,35 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                {% if medicine.stock_quantity %}
-                                                    <div class="stock-indicator">
-                                                        {% if medicine.stock_quantity > 10 %}
-                                                            <span class="badge bg-success bg-opacity-10 text-success border-0">
-                                                                <i class="bi bi-check-circle me-1"></i>In Stock
-                                                            </span>
-                                                        {% elif medicine.stock_quantity > 0 %}
-                                                            <span class="badge bg-warning bg-opacity-10 text-warning border-0">
-                                                                <i class="bi bi-exclamation-triangle me-1"></i>Low Stock
-                                                            </span>
-                                                        {% else %}
-                                                            <span class="badge bg-danger bg-opacity-10 text-danger border-0">
-                                                                <i class="bi bi-x-circle me-1"></i>Out of Stock
-                                                            </span>
-                                                        {% endif %}
-                                                        <small class="text-muted d-block mt-1">{{ medicine.stock_quantity }} units</small>
-                                                    </div>
+                                                {% if medicine.expiry_date %}
+                                                    {% now "Y-m-d" as current_date %}
+                                                    {% if medicine.expiry_date|date:"Y-m-d" < current_date %}
+                                                        <span class="status-badge status-danger">
+                                                            <i class="bi bi-exclamation-triangle-fill me-1"></i>Expired
+                                                        </span>
+                                                    {% elif medicine.expiry_date|timeuntil < "30 days" %}
+                                                        <span class="status-badge status-warning">
+                                                            <i class="bi bi-clock me-1"></i>Soon
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="status-badge status-success">
+                                                            <i class="bi bi-check-circle me-1"></i>Valid
+                                                        </span>
+                                                    {% endif %}
+                                                    <small class="text-muted d-block mt-1">{{ medicine.expiry_date }}</small>
                                                 {% else %}
-                                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border-0">
-                                                        No stock info
-                                                    </span>
+                                                    <span class="text-muted">—</span>
                                                 {% endif %}
                                             </td>
                                             <td class="text-end pe-4">
                                                 <div class="btn-group btn-group-sm">
-                                                    <a href="{% url 'products:medicine_update' medicine.pk %}" class="btn btn-outline-primary" title="Edit Medicine">
+                                                    <a href="{% url 'products:medicine_update' medicine.pk %}" class="btn btn-outline-primary" title="Edit">
                                                         <i class="bi bi-pencil"></i>
                                                     </a>
-{#                                                    <a href="{% url 'products:medicine_detail' medicine.pk %}" class="btn btn-outline-info" title="View Details">#}
+                                                    <a href="#" class="btn btn-outline-info" title="View Details">
                                                         <i class="bi bi-eye"></i>
                                                     </a>
-                                                    <a href="{% url 'products:medicine_delete' medicine.pk %}" class="btn btn-outline-danger" title="Delete Medicine">
+                                                    <a href="{% url 'products:medicine_delete' medicine.pk %}" class="btn btn-outline-danger" title="Delete">
                                                         <i class="bi bi-trash"></i>
                                                     </a>
                                                 </div>
@@ -199,9 +256,9 @@
                     {% else %}
                         <div class="text-center py-5">
                             <div class="empty-state-icon mb-3">
-                                <i class="bi bi-capsule-pill display-4 text-muted"></i>
+                                <i class="bi bi-capsule display-4 text-muted"></i>
                             </div>
-                            <h5 class="text-muted mb-3">No Medicines Found</h5>
+                            <h5 class="text-muted mb-3">No medicines found</h5>
                             <p class="text-muted mb-4">Start by adding medicines to your catalog for better health management</p>
                             <a href="{% url 'products:medicine_create' %}" class="btn btn-primary btn-lg">
                                 <i class="bi bi-plus-circle me-2"></i>Add First Medicine
@@ -209,146 +266,153 @@
                         </div>
                     {% endif %}
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Quick Actions Footer -->
-    {% if medicines %}
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card border-0 bg-light">
-                <div class="card-body text-center py-3">
-                    <div class="d-flex justify-content-center gap-3 flex-wrap">
-                        <small class="text-muted">
-                            <i class="bi bi-info-circle me-1"></i>
-                            {{ medicines|length }} medicines in catalog
-                        </small>
-                        <small class="text-muted">•</small>
-                        <small class="text-muted">
-                            <i class="bi bi-clock me-1"></i>
-                            Last updated: Just now
-                        </small>
-                        <small class="text-muted">•</small>
-                        <a href="#" class="text-primary text-decoration-none small">
-                            <i class="bi bi-download me-1"></i>
-                            Export Medicine List
-                        </a>
-                    </div>
+                <!-- Pagination -->
+                {% if medicines.has_other_pages %}
+                <div class="card-footer bg-transparent">
+                    <nav aria-label="Medicine pagination">
+                        <ul class="pagination justify-content-center mb-0">
+                            {% if medicines.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1" aria-label="First">
+                                        <i class="bi bi-chevron-double-left"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ medicines.previous_page_number }}" aria-label="Previous">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {% for num in medicines.paginator.page_range %}
+                                {% if medicines.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > medicines.number|add:'-3' and num < medicines.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if medicines.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ medicines.next_page_number }}" aria-label="Next">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ medicines.paginator.num_pages }}" aria-label="Last">
+                                        <i class="bi bi-chevron-double-right"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
-    {% endif %}
 </div>
 
 <style>
-    /* Enhanced Medicine Page Styles */
-    .stat-card {
-        background: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        transition: transform 0.2s ease;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-2px);
-    }
-
-    .stat-icon {
-        width: 50px;
-        height: 50px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-    }
-
-    .stat-content h3 {
-        font-size: 1.75rem;
-        font-weight: 700;
-        margin-bottom: 0.25rem;
-        color: var(--dark);
-    }
-
-    .stat-content p {
-        color: var(--text-light);
-        margin: 0;
-        font-size: 0.875rem;
-        font-weight: 500;
-    }
-
-    .medicine-row {
-        transition: background-color 0.2s ease;
-    }
-
-    .medicine-row:hover {
-        background-color: #f8f9fa;
-    }
-
-    .medicine-icon {
-        width: 40px;
-        height: 40px;
-        background: rgba(44, 85, 48, 0.1);
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    /* Enhanced Styles for Medicines List */
+    .medicine-avatar {
+        width: 44px;
+        height: 44px;
         font-size: 1.1rem;
     }
 
-    .medicine-type {
-        background: rgba(13, 110, 253, 0.1) !important;
-        color: #0d6efd !important;
-        border: 1px solid rgba(13, 110, 253, 0.2) !important;
+    .type-badge {
         font-size: 0.75rem;
+        padding: 0.4em 0.8em;
+        border-radius: 20px;
         font-weight: 500;
     }
 
-    .stock-indicator .badge {
-        font-size: 0.75rem;
-        padding: 0.35em 0.65em;
+    .dosage-info .progress {
+        background-color: #f8f9fa;
+        border-radius: 10px;
     }
 
-    .btn-group .btn {
-        border-radius: 6px !important;
-        margin: 0 2px;
+    .dosage-progress .progress-bar {
+        border-radius: 10px;
+    }
+
+    .stock-info .progress {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+    }
+
+    .stock-progress .progress-bar {
+        border-radius: 10px;
+    }
+
+    .stock-percent {
+        font-weight: 600;
+    }
+
+    .status-badge {
+        padding: 0.5em 1em;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .status-success {
+        background-color: #d1e7dd;
+        color: #0f5132;
+        border: 1px solid #badbcc;
+    }
+
+    .status-warning {
+        background-color: #fff3cd;
+        color: #664d03;
+        border: 1px solid #ffecb5;
+    }
+
+    .status-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f1aeb5;
+    }
+
+    .medicine-table-row {
+        transition: all 0.2s ease;
+    }
+
+    .medicine-table-row:hover {
+        background-color: #f8f9fa;
+        transform: translateY(-1px);
     }
 
     .empty-state-icon {
-        opacity: 0.7;
+        opacity: 0.6;
+    }
+
+    /* Table header styling */
+    .table-light th {
+        font-weight: 600;
+        color: #495057;
+        border-bottom: 2px solid #e9ecef;
+        padding: 1rem 0.75rem;
     }
 
     /* Responsive adjustments */
     @media (max-width: 768px) {
-        .stat-card {
-            padding: 1rem;
+        .medicine-avatar {
+            width: 36px;
+            height: 36px;
+            font-size: 0.9rem;
         }
 
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            font-size: 1rem;
-        }
-
-        .stat-content h3 {
-            font-size: 1.5rem;
-        }
-
-        .card-header {
-            flex-direction: column;
-            align-items: start !important;
-            gap: 1rem;
-        }
-
-        .card-header .d-flex {
-            width: 100%;
-            justify-content: space-between;
+        .btn-group-sm > .btn {
+            padding: 0.25rem 0.5rem;
         }
 
         .table-responsive {
@@ -357,31 +421,57 @@
     }
 
     @media (max-width: 576px) {
-        .d-flex.justify-content-between {
+        .d-flex.justify-content-between.align-items-center {
             flex-direction: column;
             gap: 1rem;
-            align-items: start !important;
+            text-align: center;
         }
 
-        .btn-group {
-            flex-wrap: wrap;
-            justify-content: end;
-        }
-
-        .btn-group .btn {
-            margin-bottom: 0.25rem;
+        .btn-lg {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
         }
     }
 </style>
 
 <script>
-    // Simple search functionality
     document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.querySelector('input[placeholder="Search medicines..."]');
-        if (searchInput) {
+        // Add subtle hover effects to table rows
+        const tableRows = document.querySelectorAll('.medicine-table-row');
+
+        tableRows.forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.cursor = 'pointer';
+            });
+        });
+
+        // Add click event to entire row for better UX
+        tableRows.forEach(row => {
+            const editLink = row.querySelector('a[href*="medicine_update"]');
+            if (editLink) {
+                row.addEventListener('click', function(e) {
+                    // Don't trigger if user clicked on action buttons
+                    if (!e.target.closest('.btn-group')) {
+                        editLink.click();
+                    }
+                });
+            }
+        });
+
+        // Simple search functionality
+        const searchInput = document.createElement('input');
+        searchInput.type = 'text';
+        searchInput.className = 'form-control form-control-sm';
+        searchInput.placeholder = 'Search medicines...';
+        searchInput.style.minWidth = '200px';
+
+        const cardHeader = document.querySelector('.card-header .d-flex');
+        if (cardHeader) {
+            cardHeader.insertBefore(searchInput, cardHeader.firstChild);
+
             searchInput.addEventListener('input', function(e) {
                 const searchTerm = e.target.value.toLowerCase();
-                const rows = document.querySelectorAll('.medicine-row');
+                const rows = document.querySelectorAll('.medicine-table-row');
 
                 rows.forEach(row => {
                     const text = row.textContent.toLowerCase();

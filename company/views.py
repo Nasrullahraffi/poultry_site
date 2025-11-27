@@ -20,7 +20,7 @@ class CompanyRegistrationView(View):
     """
     Handles user registration and company creation in one flow
     """
-    template_name = 'company/registration.html'
+    template_name = 'company/company_registration.html'
 
     def get(self, request):
         # Redirect if already logged in
@@ -81,7 +81,7 @@ class CompanyDashboardView(LoginRequiredMixin, TemplateView):
     """
     Main dashboard for company users showing overview of operations
     """
-    template_name = 'company/dashboard.html'
+    template_name = 'company/company_dashboard.html'
     login_url = 'company:login'
 
     def get_context_data(self, **kwargs):
@@ -277,7 +277,7 @@ class CompanyProfileView(LoginRequiredMixin, UpdateView):
     """
     model = Company
     form_class = CompanyProfileForm
-    template_name = 'company/profile.html'
+    template_name = 'company/company_profile.html'
     login_url = 'company:login'
     success_url = reverse_lazy('company:dashboard')
 
