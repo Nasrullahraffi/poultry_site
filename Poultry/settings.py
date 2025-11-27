@@ -128,10 +128,15 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Authentication Settings
+LOGIN_REDIRECT_URL = 'company:dashboard'
+LOGIN_URL = 'company:login'
+LOGOUT_REDIRECT_URL = 'major:home'
 
+# Allow login with email or username
+AUTHENTICATION_BACKENDS = [
+    'company.backends.EmailOrUsernameBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
-
-
-LOGIN_REDIRECT_URL = '/company/dashboard/'
-LOGIN_URL = '/company/login/'
 

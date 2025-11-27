@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Chick Batches - Poultry Management{% endblock title %}
+{% block title %}Chick Batches - Tokyo Farm{% endblock title %}
 
 {% block body %}
 <div class="container-fluid mt-4">
@@ -13,9 +13,79 @@
                     <h1 class="h3 mb-1"><i class="bi bi-layers me-2 text-primary"></i>Chick Batches</h1>
                     <p class="text-muted mb-0">Manage all poultry batches and track their progress</p>
                 </div>
-                <a href="{% url 'products:batch_create' %}" class="btn btn-primary">
+                <a href="{% url 'products:batch_create' %}" class="btn btn-primary btn-lg">
                     <i class="bi bi-plus-circle me-2"></i>New Batch
                 </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card stat-card-sm h-100">
+                <div class="card-body text-center p-3">
+                    <div class="text-primary mb-2">
+                        <i class="bi bi-layers fs-4"></i>
+                    </div>
+                    <h4 class="mb-1 fw-bold">{{ batches|length }}</h4>
+                    <small class="text-muted">Total Batches</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card stat-card-sm h-100">
+                <div class="card-body text-center p-3">
+                    <div class="text-success mb-2">
+                        <i class="bi bi-check-circle fs-4"></i>
+                    </div>
+                    <h4 class="mb-1 fw-bold">{{ active_batches_count }}</h4>
+                    <small class="text-muted">Active</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card stat-card-sm h-100">
+                <div class="card-body text-center p-3">
+                    <div class="text-info mb-2">
+                        <i class="bi bi-egg fs-4"></i>
+                    </div>
+                    <h4 class="mb-1 fw-bold">{{ total_chicks }}</h4>
+                    <small class="text-muted">Total Chicks</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card stat-card-sm h-100">
+                <div class="card-body text-center p-3">
+                    <div class="text-warning mb-2">
+                        <i class="bi bi-graph-up fs-4"></i>
+                    </div>
+                    <h4 class="mb-1 fw-bold">{{ avg_survival_rate }}%</h4>
+                    <small class="text-muted">Avg Survival</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card stat-card-sm h-100">
+                <div class="card-body text-center p-3">
+                    <div class="text-danger mb-2">
+                        <i class="bi bi-exclamation-triangle fs-4"></i>
+                    </div>
+                    <h4 class="mb-1 fw-bold">{{ attention_needed }}</h4>
+                    <small class="text-muted">Need Attention</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-6 mb-3">
+            <div class="card stat-card-sm h-100">
+                <div class="card-body text-center p-3">
+                    <div class="text-secondary mb-2">
+                        <i class="bi bi-currency-dollar fs-4"></i>
+                    </div>
+                    <h4 class="mb-1 fw-bold">{{ completed_batches }}</h4>
+                    <small class="text-muted">Completed</small>
+                </div>
             </div>
         </div>
     </div>
@@ -24,55 +94,145 @@
     <div class="row">
         <div class="col-12">
             <div class="card dashboard-card">
+                <div class="card-header bg-transparent border-bottom-0 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-list-check me-2 text-primary"></i>All Batches
+                        </h5>
+                        <p class="text-muted mb-0">{{ batches|length }} batches managed</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <a href="#" class="btn btn-outline-primary">
+                            <i class="bi bi-download me-2"></i>Export
+                        </a>
+                    </div>
+                </div>
                 <div class="card-body p-0">
                     {% if batches %}
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th class="ps-4">Batch ID</th>
+                                        <th class="ps-4">Batch Details</th>
                                         <th>Type</th>
                                         <th>Hatch Date</th>
-                                        <th>Count</th>
+                                        <th>Population</th>
                                         <th>Age</th>
+                                        <th>Health Status</th>
                                         <th>Status</th>
                                         <th class="text-end pe-4">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for b in batches %}
-                                        <tr>
-                                            <td class="ps-4 fw-semibold">
-                                                <a href="{% url 'products:batch_detail' b.pk %}" class="text-decoration-none">#{{ b.id }}</a>
+                                    {% for batch in batches %}
+                                        <tr class="batch-table-row">
+                                            <td class="ps-4">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="batch-avatar bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3">
+                                                        <i class="bi bi-egg-fill"></i>
+                                                    </div>
+                                                    <div>
+                                                        <a href="{% url 'products:batch_detail' batch.pk %}" class="text-decoration-none fw-semibold text-dark d-block">
+                                                            #{{ batch.id }}
+                                                        </a>
+                                                        <small class="text-muted">
+                                                            {{ batch.name|default:"Unnamed Batch" }}
+                                                        </small>
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td>
-                                                <span class="badge bg-secondary bg-opacity-10 text-secondary border">
-                                                    {{ b.get_breeder_type_display }}
+                                                <span class="badge type-badge
+                                                    {% if batch.breeder_type == 'BROILER' %}bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25
+                                                    {% elif batch.breeder_type == 'LAYER' %}bg-info bg-opacity-10 text-info border border-info border-opacity-25
+                                                    {% elif batch.breeder_type == 'BREEDER' %}bg-success bg-opacity-10 text-success border border-success border-opacity-25
+                                                    {% else %}bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25{% endif %}">
+                                                    {{ batch.get_breeder_type_display }}
                                                 </span>
                                             </td>
                                             <td>
-                                                <i class="bi bi-calendar3 text-muted me-1"></i>{{ b.hatch_date }}
+                                                <div class="d-flex align-items-center">
+                                                    <i class="bi bi-calendar3 text-muted me-2"></i>
+                                                    <div>
+                                                        <div class="fw-semibold">{{ batch.hatch_date }}</div>
+                                                        <small class="text-muted">{{ batch.hatch_date|timesince }} ago</small>
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td>
-                                                <span class="fw-semibold">{{ b.current_count|default:b.initial_count }}</span> / {{ b.initial_count }}
+                                                <div class="population-info">
+                                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                                        <span class="fw-semibold">{{ batch.current_count|default:batch.initial_count }}</span>
+                                                        <small class="text-muted survival-rate">{{ batch.survival_rate|default:100 }}%</small>
+                                                    </div>
+                                                    <div class="progress population-progress" style="height: 4px;">
+                                                        <div class="progress-bar
+                                                            {% if batch.survival_rate >= 90 %}bg-success
+                                                            {% elif batch.survival_rate >= 75 %}bg-warning
+                                                            {% else %}bg-danger{% endif %}"
+                                                            style="width: {{ batch.survival_rate|default:100 }}%">
+                                                        </div>
+                                                    </div>
+                                                    <small class="text-muted">of {{ batch.initial_count }} total</small>
+                                                </div>
                                             </td>
                                             <td>
-                                                <span class="badge bg-info bg-opacity-20 text-info">{{ b.age_days }} days</span>
+                                                <span class="age-badge
+                                                    {% if batch.age_days < 7 %}bg-info
+                                                    {% elif batch.age_days < 30 %}bg-success
+                                                    {% elif batch.age_days < 60 %}bg-warning
+                                                    {% else %}bg-primary{% endif %}">
+                                                    {{ batch.age_days }} days
+                                                </span>
                                             </td>
                                             <td>
-                                                <span class="badge {% if b.status == 'ACTIVE' %}bg-success{% elif b.status == 'SOLD' %}bg-primary{% else %}bg-danger{% endif %}">
-                                                    {{ b.get_status_display|default:"Active" }}
+                                                {% if batch.health_status == 'EXCELLENT' %}
+                                                    <span class="health-status excellent">
+                                                        <i class="bi bi-heart-fill me-1"></i>Excellent
+                                                    </span>
+                                                {% elif batch.health_status == 'GOOD' %}
+                                                    <span class="health-status good">
+                                                        <i class="bi bi-heart me-1"></i>Good
+                                                    </span>
+                                                {% elif batch.health_status == 'FAIR' %}
+                                                    <span class="health-status fair">
+                                                        <i class="bi bi-exclamation-triangle me-1"></i>Fair
+                                                    </span>
+                                                {% elif batch.health_status == 'POOR' %}
+                                                    <span class="health-status poor">
+                                                        <i class="bi bi-exclamation-triangle-fill me-1"></i>Poor
+                                                    </span>
+                                                {% else %}
+                                                    <span class="health-status unknown">
+                                                        <i class="bi bi-dash-circle me-1"></i>Unknown
+                                                    </span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <span class="status-badge
+                                                    {% if batch.status == 'ACTIVE' %}status-active
+                                                    {% elif batch.status == 'SOLD' %}status-sold
+                                                    {% elif batch.status == 'DECEASED' %}status-deceased
+                                                    {% elif batch.status == 'COMPLETED' %}status-completed
+                                                    {% else %}status-other{% endif %}">
+                                                    <i class="bi
+                                                        {% if batch.status == 'ACTIVE' %}bi-activity
+                                                        {% elif batch.status == 'SOLD' %}bi-currency-dollar
+                                                        {% elif batch.status == 'DECEASED' %}bi-x-circle
+                                                        {% elif batch.status == 'COMPLETED' %}bi-check-circle
+                                                        {% else %}bi-dash-circle{% endif %} me-1"></i>
+                                                    {{ batch.get_status_display }}
                                                 </span>
                                             </td>
                                             <td class="text-end pe-4">
                                                 <div class="btn-group btn-group-sm">
-                                                    <a href="{% url 'products:batch_detail' b.pk %}" class="btn btn-outline-primary" title="View Details">
+                                                    <a href="{% url 'products:batch_detail' batch.pk %}" class="btn btn-outline-primary" title="View Details">
                                                         <i class="bi bi-eye"></i>
                                                     </a>
-                                                    <a href="{% url 'products:batch_update' b.pk %}" class="btn btn-outline-secondary" title="Edit">
+                                                    <a href="{% url 'products:batch_update' batch.pk %}" class="btn btn-outline-secondary" title="Edit">
                                                         <i class="bi bi-pencil"></i>
                                                     </a>
-                                                    <a href="{% url 'products:batch_delete' b.pk %}" class="btn btn-outline-danger" title="Delete">
+                                                    <a href="{% url 'products:batch_delete' batch.pk %}" class="btn btn-outline-danger" title="Delete">
                                                         <i class="bi bi-trash"></i>
                                                     </a>
                                                 </div>
@@ -84,17 +244,275 @@
                         </div>
                     {% else %}
                         <div class="text-center py-5">
-                            <i class="bi bi-inbox display-4 text-muted d-block mb-3"></i>
+                            <div class="empty-state-icon mb-3">
+                                <i class="bi bi-inbox display-4 text-muted"></i>
+                            </div>
                             <h5 class="text-muted mb-3">No batches found</h5>
                             <p class="text-muted mb-4">Create your first batch to start managing poultry operations</p>
-                            <a href="{% url 'products:batch_create' %}" class="btn btn-primary">
+                            <a href="{% url 'products:batch_create' %}" class="btn btn-primary btn-lg">
                                 <i class="bi bi-plus-circle me-2"></i>Create First Batch
                             </a>
                         </div>
                     {% endif %}
                 </div>
+
+                <!-- Pagination -->
+                {% if batches.has_other_pages %}
+                <div class="card-footer bg-transparent">
+                    <nav aria-label="Batch pagination">
+                        <ul class="pagination justify-content-center mb-0">
+                            {% if batches.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1" aria-label="First">
+                                        <i class="bi bi-chevron-double-left"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ batches.previous_page_number }}" aria-label="Previous">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {% for num in batches.paginator.page_range %}
+                                {% if batches.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > batches.number|add:'-3' and num < batches.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if batches.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ batches.next_page_number }}" aria-label="Next">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ batches.paginator.num_pages }}" aria-label="Last">
+                                        <i class="bi bi-chevron-double-right"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* Enhanced Styles for Clean Batches List */
+    .stat-card-sm {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .stat-card-sm:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+    }
+
+    .batch-avatar {
+        width: 44px;
+        height: 44px;
+        font-size: 1.1rem;
+    }
+
+    .type-badge {
+        font-size: 0.75rem;
+        padding: 0.4em 0.8em;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    .population-info .progress {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+    }
+
+    .population-progress .progress-bar {
+        border-radius: 10px;
+    }
+
+    .age-badge {
+        padding: 0.4em 0.8em;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: white;
+    }
+
+    .health-status {
+        padding: 0.4em 0.8em;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .health-status.excellent {
+        background-color: #d1e7dd;
+        color: #0f5132;
+        border: 1px solid #badbcc;
+    }
+
+    .health-status.good {
+        background-color: #cff4fc;
+        color: #055160;
+        border: 1px solid #b6effb;
+    }
+
+    .health-status.fair {
+        background-color: #fff3cd;
+        color: #664d03;
+        border: 1px solid #ffecb5;
+    }
+
+    .health-status.poor {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f1aeb5;
+    }
+
+    .health-status.unknown {
+        background-color: #e2e3e5;
+        color: #383d41;
+        border: 1px solid #d6d8db;
+    }
+
+    .status-badge {
+        padding: 0.5em 1em;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .status-active {
+        background-color: #d1e7dd;
+        color: #0f5132;
+        border: 1px solid #badbcc;
+    }
+
+    .status-sold {
+        background-color: #cff4fc;
+        color: #055160;
+        border: 1px solid #b6effb;
+    }
+
+    .status-deceased {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f1aeb5;
+    }
+
+    .status-completed {
+        background-color: #e2e3e5;
+        color: #383d41;
+        border: 1px solid #d6d8db;
+    }
+
+    .status-other {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border: 1px solid #dee2e6;
+    }
+
+    .batch-table-row {
+        transition: all 0.2s ease;
+    }
+
+    .batch-table-row:hover {
+        background-color: #f8f9fa;
+        transform: translateY(-1px);
+    }
+
+    .survival-rate {
+        font-weight: 600;
+    }
+
+    .empty-state-icon {
+        opacity: 0.6;
+    }
+
+    /* Table header styling */
+    .table-light th {
+        font-weight: 600;
+        color: #495057;
+        border-bottom: 2px solid #e9ecef;
+        padding: 1rem 0.75rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .stat-card-sm .fs-4 {
+            font-size: 1.5rem !important;
+        }
+
+        .batch-avatar {
+            width: 36px;
+            height: 36px;
+            font-size: 0.9rem;
+        }
+
+        .btn-group-sm > .btn {
+            padding: 0.25rem 0.5rem;
+        }
+
+        .table-responsive {
+            font-size: 0.875rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .d-flex.justify-content-between.align-items-center {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .btn-lg {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add subtle hover effects to table rows
+        const tableRows = document.querySelectorAll('.batch-table-row');
+
+        tableRows.forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.cursor = 'pointer';
+            });
+        });
+
+        // Add click event to entire row for better UX
+        tableRows.forEach(row => {
+            const link = row.querySelector('a[href*="batch_detail"]');
+            if (link) {
+                row.addEventListener('click', function(e) {
+                    // Don't trigger if user clicked on action buttons
+                    if (!e.target.closest('.btn-group')) {
+                        link.click();
+                    }
+                });
+            }
+        });
+    });
+</script>
 {% endblock body %}

@@ -67,13 +67,13 @@ class CompanyLoginView(LoginView):
 
 class CompanyLogoutView(LogoutView):
     """
-    Custom logout view
+    Custom logout view - redirects to home page after logout
     """
     next_page = 'major:home'
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            messages.info(request, 'You have been logged out successfully.')
+            messages.success(request, 'You have been logged out successfully. Thank you for using our system!')
         return super().dispatch(request, *args, **kwargs)
 
 

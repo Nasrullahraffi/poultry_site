@@ -1,21 +1,76 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Medicines - Poultry Management{% endblock title %}
+{% block title %}Medicines - Tokyo Farm{% endblock title %}
 
 {% block body %}
-<div class="container-fluid mt-4">
+<div class="container-fluid px-4 py-4">
     <!-- Page Header -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="h3 mb-1"><i class="bi bi-capsule me-2 text-primary"></i>Medicine Catalog</h1>
-                    <p class="text-muted mb-0">Manage medications and treatments for poultry</p>
+                    <h1 class="h2 mb-2 fw-bold text-dark">
+                        <i class="bi bi-capsule me-2 text-primary"></i>Medicine Catalog
+                    </h1>
+                    <p class="text-muted mb-0">Manage medications, treatments, and vaccination schedules for poultry health</p>
                 </div>
-                <a href="{% url 'products:medicine_create' %}" class="btn btn-primary">
-                    <i class="bi bi-plus-circle me-2"></i>New Medicine
-                </a>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary">
+                        <i class="bi bi-filter me-2"></i>Filter
+                    </button>
+                    <a href="{% url 'products:medicine_create' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-2"></i>Add Medicine
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                    <i class="bi bi-capsule"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ medicines|length }}</h3>
+                    <p>Total Medicines</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-success bg-opacity-10 text-success">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ vaccines_count|default:"0" }}</h3>
+                    <p>Vaccines</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-info bg-opacity-10 text-info">
+                    <i class="bi bi-droplet"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ treatments_count|default:"0" }}</h3>
+                    <p>Treatments</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>{{ critical_count|default:"0" }}</h3>
+                    <p>Critical Stock</p>
+                </div>
             </div>
         </div>
     </div>
@@ -23,37 +78,115 @@
     <!-- Medicine Table -->
     <div class="row">
         <div class="col-12">
-            <div class="card dashboard-card">
+            <div class="dashboard-card">
+                <div class="card-header bg-transparent border-bottom-0 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-list-ul me-2 text-primary"></i>All Medicines
+                        </h5>
+                        <p class="text-muted mb-0 small">Showing {{ medicines|length }} medications</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <input type="text" class="form-control form-control-sm" placeholder="Search medicines..." style="min-width: 200px;">
+                        <button class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-sort-down"></i>
+                        </button>
+                    </div>
+                </div>
                 <div class="card-body p-0">
                     {% if medicines %}
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th class="ps-4">Name</th>
-                                        <th>Type</th>
-                                        <th>Dosage</th>
-                                        <th>Purpose</th>
-                                        <th class="text-end pe-4">Actions</th>
+                                        <th class="ps-4 fw-semibold">Medicine Details</th>
+                                        <th class="fw-semibold">Type & Usage</th>
+                                        <th class="fw-semibold">Dosage & Administration</th>
+                                        <th class="fw-semibold">Stock Status</th>
+                                        <th class="text-end pe-4 fw-semibold">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for m in medicines %}
-                                        <tr>
-                                            <td class="ps-4 fw-semibold">{{ m.name }}</td>
-                                            <td>
-                                                <span class="badge bg-info bg-opacity-10 text-info border">
-                                                    {{ m.get_breeder_type_display|default:"General" }}
-                                                </span>
+                                    {% for medicine in medicines %}
+                                        <tr class="medicine-row">
+                                            <td class="ps-4">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="medicine-icon me-3">
+                                                        <i class="bi bi-capsule-pill text-primary"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-1 fw-semibold">{{ medicine.name }}</h6>
+                                                        <small class="text-muted">
+                                                            {% if medicine.manufacturer %}
+                                                                {{ medicine.manufacturer }}
+                                                            {% else %}
+                                                                No manufacturer specified
+                                                            {% endif %}
+                                                        </small>
+                                                    </div>
+                                                </div>
                                             </td>
-                                            <td>{{ m.dosage|default:"—" }}</td>
-                                            <td>{{ m.purpose|default:"—"|truncatewords:10 }}</td>
+                                            <td>
+                                                <div class="d-flex flex-column">
+                                                    <span class="badge medicine-type mb-1">
+                                                        {{ medicine.get_breeder_type_display|default:"General Use" }}
+                                                    </span>
+                                                    {% if medicine.purpose %}
+                                                        <small class="text-muted">{{ medicine.purpose|truncatewords:8 }}</small>
+                                                    {% else %}
+                                                        <small class="text-muted">No purpose specified</small>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-column">
+                                                    {% if medicine.dosage %}
+                                                        <span class="fw-medium text-dark">{{ medicine.dosage }}</span>
+                                                        <small class="text-muted">
+                                                            {% if medicine.administration_method %}
+                                                                {{ medicine.administration_method }}
+                                                            {% else %}
+                                                                Standard administration
+                                                            {% endif %}
+                                                        </small>
+                                                    {% else %}
+                                                        <span class="text-muted">—</span>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {% if medicine.stock_quantity %}
+                                                    <div class="stock-indicator">
+                                                        {% if medicine.stock_quantity > 10 %}
+                                                            <span class="badge bg-success bg-opacity-10 text-success border-0">
+                                                                <i class="bi bi-check-circle me-1"></i>In Stock
+                                                            </span>
+                                                        {% elif medicine.stock_quantity > 0 %}
+                                                            <span class="badge bg-warning bg-opacity-10 text-warning border-0">
+                                                                <i class="bi bi-exclamation-triangle me-1"></i>Low Stock
+                                                            </span>
+                                                        {% else %}
+                                                            <span class="badge bg-danger bg-opacity-10 text-danger border-0">
+                                                                <i class="bi bi-x-circle me-1"></i>Out of Stock
+                                                            </span>
+                                                        {% endif %}
+                                                        <small class="text-muted d-block mt-1">{{ medicine.stock_quantity }} units</small>
+                                                    </div>
+                                                {% else %}
+                                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border-0">
+                                                        No stock info
+                                                    </span>
+                                                {% endif %}
+                                            </td>
                                             <td class="text-end pe-4">
                                                 <div class="btn-group btn-group-sm">
-                                                    <a href="{% url 'products:medicine_update' m.pk %}" class="btn btn-outline-secondary" title="Edit">
+                                                    <a href="{% url 'products:medicine_update' medicine.pk %}" class="btn btn-outline-primary" title="Edit Medicine">
                                                         <i class="bi bi-pencil"></i>
                                                     </a>
-                                                    <a href="{% url 'products:medicine_delete' m.pk %}" class="btn btn-outline-danger" title="Delete">
+{#                                                    <a href="{% url 'products:medicine_detail' medicine.pk %}" class="btn btn-outline-info" title="View Details">#}
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    <a href="{% url 'products:medicine_delete' medicine.pk %}" class="btn btn-outline-danger" title="Delete Medicine">
                                                         <i class="bi bi-trash"></i>
                                                     </a>
                                                 </div>
@@ -65,10 +198,12 @@
                         </div>
                     {% else %}
                         <div class="text-center py-5">
-                            <i class="bi bi-capsule-pill display-4 text-muted d-block mb-3"></i>
-                            <h5 class="text-muted mb-3">No medicines found</h5>
-                            <p class="text-muted mb-4">Add medicines to your catalog for treatment tracking</p>
-                            <a href="{% url 'products:medicine_create' %}" class="btn btn-primary">
+                            <div class="empty-state-icon mb-3">
+                                <i class="bi bi-capsule-pill display-4 text-muted"></i>
+                            </div>
+                            <h5 class="text-muted mb-3">No Medicines Found</h5>
+                            <p class="text-muted mb-4">Start by adding medicines to your catalog for better health management</p>
+                            <a href="{% url 'products:medicine_create' %}" class="btn btn-primary btn-lg">
                                 <i class="bi bi-plus-circle me-2"></i>Add First Medicine
                             </a>
                         </div>
@@ -77,6 +212,187 @@
             </div>
         </div>
     </div>
-</div>
-{% endblock body %}
 
+    <!-- Quick Actions Footer -->
+    {% if medicines %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-0 bg-light">
+                <div class="card-body text-center py-3">
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            {{ medicines|length }} medicines in catalog
+                        </small>
+                        <small class="text-muted">•</small>
+                        <small class="text-muted">
+                            <i class="bi bi-clock me-1"></i>
+                            Last updated: Just now
+                        </small>
+                        <small class="text-muted">•</small>
+                        <a href="#" class="text-primary text-decoration-none small">
+                            <i class="bi bi-download me-1"></i>
+                            Export Medicine List
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    /* Enhanced Medicine Page Styles */
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: transform 0.2s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .stat-content h3 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+        color: var(--dark);
+    }
+
+    .stat-content p {
+        color: var(--text-light);
+        margin: 0;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .medicine-row {
+        transition: background-color 0.2s ease;
+    }
+
+    .medicine-row:hover {
+        background-color: #f8f9fa;
+    }
+
+    .medicine-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(44, 85, 48, 0.1);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+
+    .medicine-type {
+        background: rgba(13, 110, 253, 0.1) !important;
+        color: #0d6efd !important;
+        border: 1px solid rgba(13, 110, 253, 0.2) !important;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .stock-indicator .badge {
+        font-size: 0.75rem;
+        padding: 0.35em 0.65em;
+    }
+
+    .btn-group .btn {
+        border-radius: 6px !important;
+        margin: 0 2px;
+    }
+
+    .empty-state-icon {
+        opacity: 0.7;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .stat-card {
+            padding: 1rem;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
+
+        .stat-content h3 {
+            font-size: 1.5rem;
+        }
+
+        .card-header {
+            flex-direction: column;
+            align-items: start !important;
+            gap: 1rem;
+        }
+
+        .card-header .d-flex {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .table-responsive {
+            font-size: 0.875rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .d-flex.justify-content-between {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: start !important;
+        }
+
+        .btn-group {
+            flex-wrap: wrap;
+            justify-content: end;
+        }
+
+        .btn-group .btn {
+            margin-bottom: 0.25rem;
+        }
+    }
+</style>
+
+<script>
+    // Simple search functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.querySelector('input[placeholder="Search medicines..."]');
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const rows = document.querySelectorAll('.medicine-row');
+
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        }
+    });
+</script>
+{% endblock body %}
