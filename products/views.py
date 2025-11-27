@@ -239,7 +239,7 @@ class MedicineCreateView(LoginRequiredMixin, CompanyScopedMixin, CreateView):
 class MedicineUpdateView(LoginRequiredMixin, CompanyScopedMixin, UpdateView):
     model = MedicineProduct
     form_class = MedicineProductForm
-    template_name = 'products/templates/medicine/medicine_form.html'
+    template_name = 'medicine/medicine_form.html'
     success_url = reverse_lazy('products:medicine_list')
     login_url = 'company:login'
 

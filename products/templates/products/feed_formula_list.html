@@ -1,59 +1,201 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Feed Formulas - Poultry Management{% endblock title %}
+{% block title %}Feed Formulas - Tokyo Farm{% endblock title %}
+
+{% block page_title %}Feed Formulas{% endblock %}
 
 {% block body %}
-<div class="container-fluid mt-4">
+<div class="container-fluid">
     <!-- Page Header -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h1 class="h3 mb-1"><i class="bi bi-basket me-2 text-primary"></i>Feed Formulas</h1>
-                    <p class="text-muted mb-0">Manage feed recipes and nutritional plans</p>
+                    <p class="text-muted mb-0">Manage feed recipes and nutritional plans for optimal poultry growth</p>
                 </div>
-                <a href="{% url 'products:feed_formula_create' %}" class="btn btn-primary">
+                <a href="{% url 'products:feed_formula_create' %}" class="btn btn-primary btn-lg">
                     <i class="bi bi-plus-circle me-2"></i>New Formula
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- Feed Formula Table -->
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card stat-card-sm h-100">
+                <div class="card-body text-center p-3">
+                    <div class="text-primary mb-2">
+                        <i class="bi bi-basket fs-4"></i>
+                    </div>
+                    <h4 class="mb-1 fw-bold">{{ formulas|length }}</h4>
+                    <small class="text-muted">Total Formulas</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card stat-card-sm h-100">
+                <div class="card-body text-center p-3">
+                    <div class="text-success mb-2">
+                        <i class="bi bi-egg fs-4"></i>
+                    </div>
+                    <h4 class="mb-1 fw-bold">{{ layer_formulas|default:"0" }}</h4>
+                    <small class="text-muted">Layer Formulas</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card stat-card-sm h-100">
+                <div class="card-body text-center p-3">
+                    <div class="text-warning mb-2">
+                        <i class="bi bi-graph-up fs-4"></i>
+                    </div>
+                    <h4 class="mb-1 fw-bold">{{ broiler_formulas|default:"0" }}</h4>
+                    <small class="text-muted">Broiler Formulas</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card stat-card-sm h-100">
+                <div class="card-body text-center p-3">
+                    <div class="text-info mb-2">
+                        <i class="bi bi-tree fs-4"></i>
+                    </div>
+                    <h4 class="mb-1 fw-bold">{{ breeder_formulas|default:"0" }}</h4>
+                    <small class="text-muted">Breeder Formulas</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feed Formulas Table -->
     <div class="row">
         <div class="col-12">
             <div class="card dashboard-card">
+                <div class="card-header bg-transparent border-bottom-0 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-list-check me-2 text-primary"></i>All Feed Formulas
+                        </h5>
+                        <p class="text-muted mb-0">{{ formulas|length }} formulas managed</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <a href="#" class="btn btn-outline-primary">
+                            <i class="bi bi-download me-2"></i>Export
+                        </a>
+                    </div>
+                </div>
                 <div class="card-body p-0">
                     {% if formulas %}
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th class="ps-4">Name</th>
-                                        <th>Type</th>
+                                        <th class="ps-4">Formula Details</th>
+                                        <th>Poultry Type</th>
+                                        <th>Nutritional Info</th>
                                         <th>Ingredients</th>
-                                        <th>Description</th>
+                                        <th>Usage</th>
                                         <th class="text-end pe-4">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for f in formulas %}
-                                        <tr>
-                                            <td class="ps-4 fw-semibold">{{ f.name }}</td>
+                                    {% for formula in formulas %}
+                                        <tr class="formula-table-row">
+                                            <td class="ps-4">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="formula-avatar bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3">
+                                                        <i class="bi bi-basket"></i>
+                                                    </div>
+                                                    <div>
+                                                        <a href="#" class="text-decoration-none fw-semibold text-dark d-block">
+                                                            {{ formula.name }}
+                                                        </a>
+                                                        <small class="text-muted">
+                                                            {% if formula.description %}
+                                                                {{ formula.description|truncatewords:4 }}
+                                                            {% else %}
+                                                                No description
+                                                            {% endif %}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </td>
                                             <td>
-                                                <span class="badge bg-warning bg-opacity-10 text-warning border">
-                                                    {{ f.get_breeder_type_display }}
+                                                <span class="badge type-badge
+                                                    {% if formula.breeder_type == 'BROILER' %}bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25
+                                                    {% elif formula.breeder_type == 'LAYER' %}bg-success bg-opacity-10 text-success border border-success border-opacity-25
+                                                    {% elif formula.breeder_type == 'BREEDER' %}bg-info bg-opacity-10 text-info border border-info border-opacity-25
+                                                    {% else %}bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25{% endif %}">
+                                                    {{ formula.get_breeder_type_display }}
                                                 </span>
                                             </td>
-                                            <td>{{ f.ingredients|default:"—"|truncatewords:8 }}</td>
-                                            <td>{{ f.description|default:"—"|truncatewords:10 }}</td>
+                                            <td>
+                                                <div class="nutrition-info">
+                                                    {% if formula.protein_content or formula.energy_content %}
+                                                        <div class="d-flex flex-wrap gap-2">
+                                                            {% if formula.protein_content %}
+                                                                <span class="nutrition-tag bg-primary bg-opacity-10 text-primary px-2 py-1 rounded small">
+                                                                    <i class="bi bi-droplet me-1"></i>{{ formula.protein_content }}% Protein
+                                                                </span>
+                                                            {% endif %}
+                                                            {% if formula.energy_content %}
+                                                                <span class="nutrition-tag bg-warning bg-opacity-10 text-warning px-2 py-1 rounded small">
+                                                                    <i class="bi bi-lightning me-1"></i>{{ formula.energy_content }} kcal
+                                                                </span>
+                                                            {% endif %}
+                                                        </div>
+                                                    {% else %}
+                                                        <span class="text-muted small">No nutritional data</span>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="ingredients-preview">
+                                                    {% if formula.ingredients %}
+                                                        <div class="d-flex flex-wrap gap-1 mb-1">
+                                                            {% for ingredient in formula.ingredients|slice:":3" %}
+                                                                <span class="ingredient-tag bg-light text-muted px-2 py-1 rounded small">
+                                                                    {{ ingredient }}
+                                                                </span>
+                                                            {% endfor %}
+                                                            {% if formula.ingredients|length > 3 %}
+                                                                <span class="ingredient-tag bg-light text-muted px-2 py-1 rounded small">
+                                                                    +{{ formula.ingredients|length|add:"-3" }} more
+                                                                </span>
+                                                            {% endif %}
+                                                        </div>
+                                                        <small class="text-muted">{{ formula.ingredients|length }} ingredients</small>
+                                                    {% else %}
+                                                        <span class="text-muted small">No ingredients listed</span>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="usage-info">
+                                                    {% if formula.age_group %}
+                                                        <span class="badge usage-badge bg-info bg-opacity-10 text-info border-0 mb-1">
+                                                            {{ formula.age_group }}
+                                                        </span>
+                                                    {% endif %}
+                                                    {% if formula.production_stage %}
+                                                        <div>
+                                                            <small class="text-muted">{{ formula.production_stage }}</small>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
                                             <td class="text-end pe-4">
                                                 <div class="btn-group btn-group-sm">
-                                                    <a href="{% url 'products:feed_formula_update' f.pk %}" class="btn btn-outline-secondary" title="Edit">
+                                                    <a href="{% url 'products:feed_formula_update' formula.pk %}" class="btn btn-outline-primary" title="Edit Formula">
                                                         <i class="bi bi-pencil"></i>
                                                     </a>
-                                                    <a href="{% url 'products:feed_formula_delete' f.pk %}" class="btn btn-outline-danger" title="Delete">
+                                                    <a href="#" class="btn btn-outline-info" title="View Details">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    <a href="{% url 'products:feed_formula_delete' formula.pk %}" class="btn btn-outline-danger" title="Delete Formula">
                                                         <i class="bi bi-trash"></i>
                                                     </a>
                                                 </div>
@@ -65,18 +207,216 @@
                         </div>
                     {% else %}
                         <div class="text-center py-5">
-                            <i class="bi bi-basket-fill display-4 text-muted d-block mb-3"></i>
+                            <div class="empty-state-icon mb-3">
+                                <i class="bi bi-basket display-4 text-muted"></i>
+                            </div>
                             <h5 class="text-muted mb-3">No feed formulas found</h5>
-                            <p class="text-muted mb-4">Create feed formulas to plan nutritional programs</p>
-                            <a href="{% url 'products:feed_formula_create' %}" class="btn btn-primary">
+                            <p class="text-muted mb-4">Create feed formulas to plan nutritional programs for your poultry</p>
+                            <a href="{% url 'products:feed_formula_create' %}" class="btn btn-primary btn-lg">
                                 <i class="bi bi-plus-circle me-2"></i>Create First Formula
                             </a>
                         </div>
                     {% endif %}
                 </div>
+
+                <!-- Pagination -->
+                {% if formulas.has_other_pages %}
+                <div class="card-footer bg-transparent">
+                    <nav aria-label="Formula pagination">
+                        <ul class="pagination justify-content-center mb-0">
+                            {% if formulas.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1" aria-label="First">
+                                        <i class="bi bi-chevron-double-left"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ formulas.previous_page_number }}" aria-label="Previous">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {% for num in formulas.paginator.page_range %}
+                                {% if formulas.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > formulas.number|add:'-3' and num < formulas.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if formulas.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ formulas.next_page_number }}" aria-label="Next">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ formulas.paginator.num_pages }}" aria-label="Last">
+                                        <i class="bi bi-chevron-double-right"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
-{% endblock body %}
 
+<style>
+    /* Enhanced Styles for Feed Formulas */
+    .formula-avatar {
+        width: 44px;
+        height: 44px;
+        font-size: 1.1rem;
+    }
+
+    .type-badge {
+        font-size: 0.75rem;
+        padding: 0.4em 0.8em;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    .nutrition-tag {
+        font-size: 0.7rem;
+        font-weight: 500;
+    }
+
+    .ingredient-tag {
+        font-size: 0.7rem;
+        border: 1px solid #dee2e6;
+    }
+
+    .usage-badge {
+        font-size: 0.7rem;
+        padding: 0.3em 0.6em;
+    }
+
+    .formula-table-row {
+        transition: all 0.2s ease;
+    }
+
+    .formula-table-row:hover {
+        background-color: #f8f9fa;
+        transform: translateY(-1px);
+    }
+
+    .empty-state-icon {
+        opacity: 0.6;
+    }
+
+    /* Table header styling */
+    .table-light th {
+        font-weight: 600;
+        color: #495057;
+        border-bottom: 2px solid #e9ecef;
+        padding: 1rem 0.75rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .formula-avatar {
+            width: 36px;
+            height: 36px;
+            font-size: 0.9rem;
+        }
+
+        .btn-group-sm > .btn {
+            padding: 0.25rem 0.5rem;
+        }
+
+        .table-responsive {
+            font-size: 0.875rem;
+        }
+
+        .nutrition-tag,
+        .ingredient-tag {
+            font-size: 0.65rem;
+            padding: 0.25rem 0.5rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .d-flex.justify-content-between.align-items-center {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .btn-lg {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .card-header .d-flex {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: start !important;
+        }
+
+        .card-header .d-flex .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add subtle hover effects to table rows
+        const tableRows = document.querySelectorAll('.formula-table-row');
+
+        tableRows.forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.cursor = 'pointer';
+            });
+        });
+
+        // Add click event to entire row for better UX
+        tableRows.forEach(row => {
+            const editLink = row.querySelector('a[href*="feed_formula_update"]');
+            if (editLink) {
+                row.addEventListener('click', function(e) {
+                    // Don't trigger if user clicked on action buttons
+                    if (!e.target.closest('.btn-group')) {
+                        editLink.click();
+                    }
+                });
+            }
+        });
+
+        // Simple search functionality
+        const searchInput = document.createElement('input');
+        searchInput.type = 'text';
+        searchInput.className = 'form-control form-control-sm';
+        searchInput.placeholder = 'Search formulas...';
+        searchInput.style.minWidth = '200px';
+
+        const cardHeader = document.querySelector('.card-header .d-flex');
+        if (cardHeader) {
+            cardHeader.insertBefore(searchInput, cardHeader.firstChild);
+
+            searchInput.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const rows = document.querySelectorAll('.formula-table-row');
+
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        }
+    });
+</script>
+{% endblock body %}
