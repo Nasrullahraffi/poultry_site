@@ -6,4 +6,6 @@ app_name = 'major'
 urlpatterns = [
     path('breader/create/', BreederCreateView.as_view(), name="breeder"),
     path('', FrontpageView.as_view(), name="frontpage"),
+    # Alias for frontpage - for backward compatibility
+    path('home/', FrontpageView.as_view(), name="home"),
 ]

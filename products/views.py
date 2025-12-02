@@ -99,11 +99,7 @@ class BatchUpdateView(LoginRequiredMixin, CompanyScopedMixin, UpdateView):
     form_class = ChickBatchForm
     template_name = 'batch/batch_form.html'
     login_url = 'company:login'
-
-    def form_valid(self, form):
-        result = super().form_valid(form)
-        messages.success(self.request, 'Batch updated.')
-        return redirect('products:batch_detail', pk=self.object.pk)
+    success_url = reverse_lazy('products:batch_list')
 
 class BatchDeleteView(LoginRequiredMixin, CompanyScopedMixin, DeleteView):
     model = ChickBatch

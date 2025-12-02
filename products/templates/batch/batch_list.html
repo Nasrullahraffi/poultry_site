@@ -165,15 +165,15 @@
                                                         <span class="fw-semibold">{{ batch.current_count|default:batch.initial_count }}</span>
                                                         <small class="text-muted survival-rate">{{ batch.survival_rate|default:100 }}%</small>
                                                     </div>
-                                                    <div class="progress population-progress" style="height: 4px;">
-                                                        <div class="progress-bar
-                                                            {% if batch.survival_rate >= 90 %}bg-success
-                                                            {% elif batch.survival_rate >= 75 %}bg-warning
-                                                            {% else %}bg-danger{% endif %}"
-                                                            style="width: {{ batch.survival_rate|default:100 }}%">
-                                                        </div>
-                                                    </div>
-                                                    <small class="text-muted">of {{ batch.initial_count }} total</small>
+{#                                                    <div class="progress population-progress" style="height: 4px;">#}
+{#                                                        <div class="progress-bar#}
+{#                                                            {% if batch.survival_rate >= 90 %}bg-success#}
+{#                                                            {% elif batch.survival_rate >= 75 %}bg-warning#}
+{#                                                            {% else %}bg-danger{% endif %}"#}
+{#                                                            style="width: {{ batch.survival_rate|default:100 }}%">#}
+{#                                                        </div>#}
+{#                                                    </div>#}
+{#                                                    <small class="text-muted">of {{ batch.initial_count }} total</small>#}
                                                 </div>
                                             </td>
                                             <td>
