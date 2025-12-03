@@ -219,6 +219,3 @@ class InventoryProduct(CompanyScopedModel):
             models.Index(fields=['company', 'is_active']),
         ]
 
-# ---------------------------------------------------------------------------
-# NOTE: Removed non-essential models (RFIDTag, StockMovement, Vendor, PurchaseOrder, PurchaseOrderItem)
-# ---------------------------------------------------------------------------
