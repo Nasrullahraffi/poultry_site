@@ -82,12 +82,13 @@ class TreatmentRecordForm(forms.ModelForm):
 class DiseaseCatalogForm(forms.ModelForm):
     class Meta:
         model = DiseaseCatalog
-        fields = ['name', 'breeder_type', 'severity', 'description']
+        fields = ['name', 'breeder_type', 'severity', 'mortality_rate',
+                 'symptoms', 'treatment', 'prevention', 'description']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'breeder_type': forms.Select(attrs={'class': 'form-select'}),
-            'severity': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 5}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'symptoms': forms.Textarea(attrs={'rows': 4}),
+            'treatment': forms.Textarea(attrs={'rows': 4}),
+            'prevention': forms.Textarea(attrs={'rows': 4}),
+            'description': forms.Textarea(attrs={'rows': 3}),
         }
 
 class DiseaseCaseForm(forms.ModelForm):

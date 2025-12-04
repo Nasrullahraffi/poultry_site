@@ -167,6 +167,10 @@ class DiseaseCatalog(TimeStampedModel):
     name = models.CharField(max_length=120, unique=True)
     breeder_type = models.CharField(max_length=16, choices=BreederType.choices, blank=True)
     severity = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], help_text="1=Low 5=High")
+    mortality_rate = models.DecimalField(max_digits=5, decimal_places=2, validators=[MinValueValidator(0)], help_text="Percentage (e.g., 12.5 for 12.5%)", default=0)
+    symptoms = models.TextField(blank=True, max_length=1000)
+    treatment = models.TextField(blank=True, max_length=1000)
+    prevention = models.TextField(blank=True, max_length=1000)
     description = models.TextField(blank=True, max_length=1500)
 
     def __str__(self):

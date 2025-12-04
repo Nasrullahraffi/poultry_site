@@ -10,7 +10,6 @@ class BreederCreateView(FormView):
 
     def form_valid(self, form):
         form.save()
-        messages.success(self.request, 'Breeder saved successfully.')
         return render(self.request, self.template_name, {'form': self.form_class()})
 
     def form_invalid(self, form):

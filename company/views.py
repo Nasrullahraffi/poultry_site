@@ -67,8 +67,7 @@ class CompanyLoginView(LoginView):
 
 class CompanyLogoutView(LogoutView):
     """
-    Custom logout view - shows confirmation page on GET, logs out on POST
-    Redirects to login page after logout
+    Custom logout view
     """
     template_name = 'company/logout.html'
     next_page = 'company:login'

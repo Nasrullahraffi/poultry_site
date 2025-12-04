@@ -111,10 +111,9 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th class="ps-4">Medicine Details</th>
-                                        <th>Type & Purpose</th>
-                                        <th>Dosage & Administration</th>
-                                        <th>Stock Status</th>
-                                        <th>Expiry</th>
+
+                                        <th>Breed Type</th>
+                                        <th>Description</th>
                                         <th class="text-end pe-4">Actions</th>
                                     </tr>
                                 </thead>
@@ -130,106 +129,36 @@
                                                         <a href="#" class="text-decoration-none fw-semibold text-dark d-block">
                                                             {{ medicine.name }}
                                                         </a>
-                                                        <small class="text-muted">
-                                                            {% if medicine.manufacturer %}
-                                                                {{ medicine.manufacturer }}
-                                                            {% else %}
-                                                                No manufacturer
-                                                            {% endif %}
-                                                        </small>
+
                                                     </div>
+
                                                 </div>
                                             </td>
-                                            <td>
-                                                <div class="d-flex flex-column">
-                                                    <span class="badge type-badge
-                                                        {% if medicine.medicine_type == 'VACCINE' %}bg-success bg-opacity-10 text-success border border-success border-opacity-25
-                                                        {% elif medicine.medicine_type == 'ANTIBIOTIC' %}bg-info bg-opacity-10 text-info border border-info border-opacity-25
-                                                        {% elif medicine.medicine_type == 'VITAMIN' %}bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25
-                                                        {% elif medicine.medicine_type == 'DEWORMER' %}bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25
-                                                        {% else %}bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25{% endif %}">
-                                                        {{ medicine.get_medicine_type_display|default:"General" }}
-                                                    </span>
-                                                    {% if medicine.purpose %}
-                                                        <small class="text-muted mt-1">{{ medicine.purpose|truncatewords:6 }}</small>
-                                                    {% else %}
-                                                        <small class="text-muted mt-1">No purpose specified</small>
-                                                    {% endif %}
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="dosage-info">
-                                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                                        <span class="fw-semibold">{{ medicine.dosage|default:"Standard" }}</span>
-                                                        {% if medicine.administration_method %}
-                                                            <small class="text-muted">{{ medicine.administration_method }}</small>
-                                                        {% endif %}
+                                            <td class="ps-4">
+                                                <div class="d-flex align-items-center">
+
+                                                    <div>
+                                                        <a href="#" class="text-decoration-none fw-semibold text-dark d-block">
+                                                            {{ medicine.breeder_type }}
+                                                        </a>
+
                                                     </div>
-                                                    {% if medicine.frequency %}
-                                                        <div class="progress dosage-progress" style="height: 4px;">
-                                                            <div class="progress-bar bg-info" style="width: 100%"></div>
-                                                        </div>
-                                                        <small class="text-muted">{{ medicine.frequency }}</small>
-                                                    {% endif %}
+
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="stock-info">
-                                                    {% if medicine.stock_quantity %}
                                                         <div class="d-flex justify-content-between align-items-center mb-1">
-                                                            <span class="fw-semibold">{{ medicine.stock_quantity }}</span>
+                                                            <span class="fw-semibold">{{ medicine.description }}</span>
                                                             <small class="text-muted stock-percent">
-                                                                {% if medicine.min_stock_level %}
-                                                                    {% widthratio medicine.stock_quantity medicine.min_stock_level 100 %}%
-                                                                {% endif %}
+
                                                             </small>
                                                         </div>
-                                                        <div class="progress stock-progress" style="height: 4px;">
-                                                            {% if medicine.min_stock_level %}
-                                                                {% widthratio medicine.stock_quantity medicine.min_stock_level 100 as stock_percent %}
-                                                                <div class="progress-bar
-                                                                    {% if stock_percent >= 100 %}bg-success
-                                                                    {% elif stock_percent >= 50 %}bg-warning
-                                                                    {% else %}bg-danger{% endif %}"
-                                                                    style="width: {{ stock_percent }}%">
-                                                                </div>
-                                                            {% else %}
-                                                                <div class="progress-bar bg-success" style="width: 100%"></div>
-                                                            {% endif %}
-                                                        </div>
-                                                        <small class="text-muted">
-                                                            {% if medicine.min_stock_level %}
-                                                                Min: {{ medicine.min_stock_level }}
-                                                            {% else %}
-                                                                No min level
-                                                            {% endif %}
-                                                        </small>
-                                                    {% else %}
-                                                        <span class="text-muted">—</span>
-                                                    {% endif %}
+
+
                                                 </div>
                                             </td>
-                                            <td>
-                                                {% if medicine.expiry_date %}
-                                                    {% now "Y-m-d" as current_date %}
-                                                    {% if medicine.expiry_date|date:"Y-m-d" < current_date %}
-                                                        <span class="status-badge status-danger">
-                                                            <i class="bi bi-exclamation-triangle-fill me-1"></i>Expired
-                                                        </span>
-                                                    {% elif medicine.expiry_date|timeuntil < "30 days" %}
-                                                        <span class="status-badge status-warning">
-                                                            <i class="bi bi-clock me-1"></i>Soon
-                                                        </span>
-                                                    {% else %}
-                                                        <span class="status-badge status-success">
-                                                            <i class="bi bi-check-circle me-1"></i>Valid
-                                                        </span>
-                                                    {% endif %}
-                                                    <small class="text-muted d-block mt-1">{{ medicine.expiry_date }}</small>
-                                                {% else %}
-                                                    <span class="text-muted">—</span>
-                                                {% endif %}
-                                            </td>
+
                                             <td class="text-end pe-4">
                                                 <div class="btn-group btn-group-sm">
                                                     <a href="{% url 'products:medicine_update' medicine.pk %}" class="btn btn-outline-primary" title="Edit">
