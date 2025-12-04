@@ -33,7 +33,7 @@ BREEDER_CHOICES = [
 ]
 
 class Breeder_Model(models.Model):
-    breeder_id = models.IntegerField(primary_key=True,default=uuid.uuid4, editable=False, unique=True)
+    breeder_id = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False, unique=True)
     breeder_type = models.CharField(choices=BREEDER_CHOICES,max_length=100)
     breeder_age = models.IntegerField()
     
@@ -44,7 +44,7 @@ class Breeder_Model(models.Model):
 
 
 class Distributed_among_companies(models.Model):
-    medicine_id = models.IntegerField(primary_key=True,default=uuid.uuid4, unique=True)
+    medicine_id = models.UUIDField(primary_key=True,default=uuid.uuid4, unique=True)
     company_name = models.ForeignKey(Company_Model, on_delete=models.CASCADE, )
     type_of_chick = models.CharField(choices=BREEDER_CHOICES,max_length=100 )
     total_number_of_chicks = models.IntegerField()

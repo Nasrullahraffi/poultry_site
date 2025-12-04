@@ -63,7 +63,7 @@
             <div class="col-12">
                 <div class="section-header">
                     <h3><i class="bi bi-speedometer2 me-2"></i>Farm Overview</h3>
-                    <p class="section-subtitle">Real-time performance metrics</p>
+
                 </div>
             </div>
         </div>
@@ -161,9 +161,7 @@
                 <div class="dashboard-section">
                     <div class="section-header">
                         <h4><i class="bi bi-layers me-2"></i>Recent Batches</h4>
-                        <a href="{% url 'products:batch_list' %}" class="btn btn-outline-primary btn-sm">
-                            View All <i class="bi bi-arrow-right ms-1"></i>
-                        </a>
+
                     </div>
                     <div class="section-content">
                         {% if recent_batches %}
@@ -283,38 +281,38 @@
             <!-- Right Column -->
             <div class="col-xl-4">
                 <!-- Alerts & Notifications -->
-                <div class="dashboard-section">
-                    <div class="section-header">
-                        <h4><i class="bi bi-bell me-2"></i>Alerts</h4>
-                        <span class="badge bg-danger">{{ alerts_count }}</span>
-                    </div>
-                    <div class="section-content">
-                        {% if alerts %}
-                            <div class="alerts-list">
-                                {% for alert in alerts %}
-                                    <div class="alert-item alert-{{ alert.priority }}">
-                                        <div class="alert-icon">
-                                            <i class="bi bi-exclamation-triangle"></i>
-                                        </div>
-                                        <div class="alert-content">
-                                            <h6>{{ alert.title }}</h6>
-                                            <p>{{ alert.message }}</p>
-                                        </div>
-                                        <div class="alert-time">Now</div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            <div class="empty-state small">
-                                <div class="empty-icon text-success">
-                                    <i class="bi bi-check-circle"></i>
-                                </div>
-                                <h6>No Active Alerts</h6>
-                                <p class="small">All systems operational</p>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
+{#                <div class="dashboard-section">#}
+{#                    <div class="section-header">#}
+{#                        <h4><i class="bi bi-bell me-2"></i>Alerts</h4>#}
+{#                        <span class="badge bg-danger">{{ alerts_count }}</span>#}
+{#                    </div>#}
+{#                    <div class="section-content">#}
+{#                        {% if alerts %}#}
+{#                            <div class="alerts-list">#}
+{#                                {% for alert in alerts %}#}
+{#                                    <div class="alert-item alert-{{ alert.priority }}">#}
+{#                                        <div class="alert-icon">#}
+{#                                            <i class="bi bi-exclamation-triangle"></i>#}
+{#                                        </div>#}
+{#                                        <div class="alert-content">#}
+{#                                            <h6>{{ alert.title }}</h6>#}
+{#                                            <p>{{ alert.message }}</p>#}
+{#                                        </div>#}
+{#                                        <div class="alert-time">Now</div>#}
+{#                                    </div>#}
+{#                                {% endfor %}#}
+{#                            </div>#}
+{#                        {% else %}#}
+{#                            <div class="empty-state small">#}
+{#                                <div class="empty-icon text-success">#}
+{#                                    <i class="bi bi-check-circle"></i>#}
+{#                                </div>#}
+{#                                <h6>No Active Alerts</h6>#}
+{#                                <p class="small">All systems operational</p>#}
+{#                            </div>#}
+{#                        {% endif %}#}
+{#                    </div>#}
+{#                </div>#}
 
                 <!-- Performance Metrics -->
                 <div class="dashboard-section">
@@ -324,7 +322,7 @@
                     <div class="section-content">
                         <div class="metrics-grid">
                             <div class="metric-item">
-                                <div class="metric-label">Avg. Batch Age</div>
+                                <div class="metric-label">Avg. Batch Age :</div>
                                 <div class="metric-value">
                                     {% if stats.avg_batch_age %}
                                         {{ stats.avg_batch_age }} days
@@ -334,7 +332,7 @@
                                 </div>
                             </div>
                             <div class="metric-item">
-                                <div class="metric-label">Oldest Batch</div>
+                                <div class="metric-label">Oldest Batch :</div>
                                 <div class="metric-value">
                                     {% if stats.oldest_active_batch %}
                                         {{ stats.oldest_active_batch }} days
@@ -344,7 +342,7 @@
                                 </div>
                             </div>
                             <div class="metric-item">
-                                <div class="metric-label">Health Score</div>
+                                <div class="metric-label">Health Score :</div>
                                 <div class="metric-value">
                                     {% if stats.mortality_rate %}
                                         {% if stats.mortality_rate < 3 %}
@@ -728,7 +726,7 @@
 
     .metric-item {
         display: flex;
-        justify-content: between;
+        justify-content: betweens;
         align-items: center;
         padding: 0.75rem 0;
         border-bottom: 1px solid var(--border);

@@ -18,10 +18,8 @@
                 Batches
             </a>
 
-            <a href="{% url 'products:inventory_list' %}" class="nav-link {% if 'inventory' in request.resolver_match.url_name %}active{% endif %}">
-                <i class="bi bi-box-seam"></i>
-                Inventory
-            </a>
+            <div class="sidebar-divider"></div>
+
 
             <a href="{% url 'products:medicine_list' %}" class="nav-link {% if 'medicine' in request.resolver_match.url_name %}active{% endif %}">
                 <i class="bi bi-capsule"></i>
@@ -39,6 +37,11 @@
             </a>
 
             <div class="sidebar-divider"></div>
+
+                        <a href="{% url 'products:inventory_list' %}" class="nav-link {% if 'inventory' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="bi bi-box-seam"></i>
+                Inventory
+            </a>
 
             <a href="{% url 'company:profile' %}" class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
                 <i class="bi bi-building"></i>
